@@ -17,10 +17,11 @@ func AllProcessors() []*server.Route {
 			Req:     nil,
 		},
 		{
-			Name:   vo.CmdGetUser,
-			Method: http.MethodPost,
-			Path:   vo.PathGetUser,
-			Req:    &vo.GetUserRequest{},
+			Name:    vo.CmdGetUser,
+			Method:  http.MethodPost,
+			Path:    vo.PathGetUser,
+			Handler: GetUserProcessor,
+			Req:     &vo.GetUserRequest{},
 		},
 		{
 			Name:   vo.CmdCreateUser,
