@@ -10,7 +10,7 @@ import (
 	"github.com/NganJason/BE-template/pkg/server"
 )
 
-func GetUserProcessor(
+func TemplateProcessor(
 	ctx context.Context,
 	writer http.ResponseWriter,
 	req *http.Request,
@@ -25,7 +25,7 @@ func GetUserProcessor(
 
 	response := &vo.GetUserResponse{}
 
-	p := &getUserProcessor{
+	p := &templateProcessor{
 		ctx:  ctx,
 		req:  request,
 		resp: response,
@@ -34,13 +34,12 @@ func GetUserProcessor(
 	return p.process()
 }
 
-type getUserProcessor struct {
-	ctx    context.Context
-	req    *vo.GetUserRequest
-	resp   *vo.GetUserResponse
-	userID *uint64
+type templateProcessor struct {
+	ctx  context.Context
+	req  *vo.GetUserRequest
+	resp *vo.GetUserResponse
 }
 
-func (p *getUserProcessor) process() *server.HandlerResp {
+func (p *templateProcessor) process() *server.HandlerResp {
 	return nil
 }
