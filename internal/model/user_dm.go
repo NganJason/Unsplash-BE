@@ -19,3 +19,7 @@ func (dm *userDM) GetUserByID(userID *uint64) (*User, error) {
 func (dm *userDM) GetUserByEmail(email *string) (*User, error) {
 	return nil, nil
 }
+
+func (dm *userDM) CreateUser(req *CreateUserReq) (*User, error) {
+	return nil, nil
+}

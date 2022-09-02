@@ -87,3 +87,23 @@ func (h *userHandler) GetUser(
 
 	return toVoUser(user), nil
 }
+
+func (h *userHandler) CreateUser(req *vo.CreateUserRequest) (*vo.User, error) {
+	hashedPassword, saltString := auth.CreatePasswordSHA(*req.Password, 16)
+
+	user, err := h.userDM.CreateUser(
+		&model.CreateUserReq{
+			EmailAddress:   req.EmailAddress,
+			HashedPassword: &hashedPassword,
+			SaltString:     &saltString,
+			Username:       req.Username,
+			FirstName:      req.FirstName,
+			LastName:       req.LastName,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return toVoUser(user), nil
+}
