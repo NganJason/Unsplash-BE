@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/NganJason/BE-template/internal/config"
 	"github.com/NganJason/BE-template/internal/model/query"
 	"github.com/NganJason/BE-template/pkg/cerr"
 )
@@ -19,6 +20,7 @@ type userDM struct {
 func NewUserDM(ctx context.Context) UserDM {
 	return &userDM{
 		ctx: ctx,
+		db:  config.GetDBs().UnsplashDB,
 	}
 }
 

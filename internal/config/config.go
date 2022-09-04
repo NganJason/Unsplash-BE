@@ -1,12 +1,14 @@
 package config
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 
 	"github.com/NganJason/BE-template/pkg/cerr"
+	"github.com/NganJason/BE-template/pkg/clog"
 )
 
 var (
@@ -14,7 +16,7 @@ var (
 )
 
 type Config struct {
-	SampleDB *Database `json:"sample_db"`
+	UnsplashDB *Database `json:"unsplash_db"`
 }
 
 func GetConfig() *Config {
@@ -32,7 +34,17 @@ func InitGlobalConfig() error {
 	return nil
 }
 
+const configFilePath = "../internal/config/config.json"
+
 func initConfigs() error {
+	fetchConfigFromFile(configFilePath, &GlobalConfig)
+
+	if GlobalConfig.UnsplashDB == nil {
+		clog.Fatal(context.Background(), "fail to init unsplashDB")
+	}
+
+	initDBs()
+
 	return nil
 }
 

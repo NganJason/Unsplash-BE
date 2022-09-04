@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/NganJason/BE-template/internal/config"
 	"github.com/NganJason/BE-template/internal/model/query"
 	"github.com/NganJason/BE-template/internal/util"
 	"github.com/NganJason/BE-template/pkg/cerr"
@@ -18,7 +19,10 @@ type imageDM struct {
 }
 
 func NewImageDM(ctx context.Context) ImageDM {
-	return &imageDM{}
+	return &imageDM{
+		ctx: ctx,
+		db:  config.GetDBs().UnsplashDB,
+	}
 }
 
 func (dm *imageDM) GetImages(cursor *uint64, pageSize uint32) ([]*Image, error) {

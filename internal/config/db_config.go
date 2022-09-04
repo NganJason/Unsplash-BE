@@ -1,12 +1,16 @@
 package config
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"net/http"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
+
 	"github.com/NganJason/BE-template/pkg/cerr"
+	"github.com/NganJason/BE-template/pkg/clog"
 )
 
 type Database struct {
@@ -19,6 +23,30 @@ type Database struct {
 	PoolMaxIdle    int    `json:"pool_max_idle"`
 	MaxIdleSeconds int    `json:"max_idle_seconds"`
 	MaxLifeSeconds int    `json:"max_life_seconds"`
+}
+
+type DBs struct {
+	UnsplashDB *sql.DB
+}
+
+var (
+	globalDBs = new(DBs)
+)
+
+func GetDBs() *DBs {
+	return globalDBs
+}
+
+func initDBs() {
+	var err error
+
+	globalDBs.UnsplashDB, err = initDB(GetConfig().UnsplashDB)
+	if err != nil {
+		clog.Fatal(
+			context.Background(),
+			fmt.Sprintf("init unsplashDB err=%s", err.Error()),
+		)
+	}
 }
 
 func initDB(cfg *Database) (*sql.DB, error) {

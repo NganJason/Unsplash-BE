@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/NganJason/BE-template/internal/config"
 	"github.com/NganJason/BE-template/pkg/cerr"
 )
 
@@ -18,6 +19,7 @@ type userLikeDM struct {
 func NewUserLikeDM(ctx context.Context) UserLikeDM {
 	return &userLikeDM{
 		ctx: ctx,
+		db:  config.GetDBs().UnsplashDB,
 	}
 }
 
