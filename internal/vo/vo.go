@@ -58,12 +58,13 @@ type CreateUserResponse struct {
 
 type GetImagesRequest struct {
 	PageSize *uint32 `json:"page_size"`
-	Cursor   *uint64 `json:"cursor"`
+	Cursor   *string `json:"cursor"`
 }
 
 type GetImagesResponse struct {
 	CommonResponse
-	Images []*Image `json:"images"`
+	Images     []*Image `json:"images"`
+	NextCursor *string  `json:"next_cursor"`
 }
 
 type UploadImageRequest struct{}
@@ -99,7 +100,7 @@ type User struct {
 
 type Image struct {
 	ID        *uint64 `json:"id"`
-	UserID    *uint64 `json:"user_id"`
+	User      *User   `json:"user"`
 	Url       *string `json:"url"`
 	Desc      *string `json:"desc"`
 	Likes     *uint32 `json:"likes"`

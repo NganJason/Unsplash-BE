@@ -32,7 +32,7 @@ func (h *userHandler) GetUser(
 	password *string,
 ) (*vo.User, error) {
 	if userID != nil {
-		user, err := h.userDM.GetUserByID(userID)
+		users, err := h.userDM.GetUserByIDs([]uint64{*userID})
 		if err != nil {
 			return nil, cerr.New(
 				fmt.Sprintf("get user by ID err=%s", err.Error()),
@@ -40,14 +40,14 @@ func (h *userHandler) GetUser(
 			)
 		}
 
-		if user == nil {
+		if len(users) == 0 {
 			return nil, cerr.New(
 				fmt.Sprintf("cannot find user with userID=%d", *userID),
 				http.StatusBadRequest,
 			)
 		}
 
-		return toVoUser(user), nil
+		return toVoUser(users[0]), nil
 	}
 
 	if emailAddress == nil || password == nil {
@@ -57,7 +57,7 @@ func (h *userHandler) GetUser(
 		)
 	}
 
-	user, err := h.userDM.GetUserByEmail(emailAddress)
+	users, err := h.userDM.GetUserByEmails([]string{*emailAddress})
 	if err != nil {
 		return nil, cerr.New(
 			fmt.Sprintf("get user by username err=%s", err.Error()),
@@ -65,13 +65,14 @@ func (h *userHandler) GetUser(
 		)
 	}
 
-	if user == nil {
+	if len(users) == 0 {
 		return nil, cerr.New(
 			fmt.Sprintf("cannot find user with email=%s", *emailAddress),
 			http.StatusBadGateway,
 		)
 	}
 
+	user := users[0]
 	isPasswordMatch := auth.ComparePasswordSHA(
 		*password,
 		*user.HashedPassword,
