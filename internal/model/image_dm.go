@@ -13,3 +13,11 @@ func NewImageDM(ctx context.Context) ImageDM {
 func (dm *imageDM) GetImages(cursor *uint64, pageSize uint32) ([]*Image, error) {
 	return nil, nil
 }
+
+func (dm *imageDM) UploadImage(url string, userID uint64, desc *string) (*Image, error) {
+	return nil, nil
+}
+
+func (dm *imageDM) AddDeltaImage(req *AddDeltaImageReq) (*Image, error) {
+	return nil, nil
+}

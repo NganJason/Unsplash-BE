@@ -38,22 +38,18 @@ func AllProcessors() []*server.Route {
 			Req:     &vo.GetImagesRequest{},
 		},
 		{
-			Name:   vo.CmdUploadImage,
-			Method: http.MethodPost,
-			Path:   vo.PathUploadImage,
-			Req:    &vo.UploadImageRequest{},
+			Name:    vo.CmdUploadImage,
+			Method:  http.MethodPost,
+			Path:    vo.PathUploadImage,
+			Handler: UploadImageProcessor,
+			Req:     &vo.UploadImageRequest{},
 		},
 		{
-			Name:   vo.CmdLikeImage,
-			Method: http.MethodPost,
-			Path:   vo.PathLikeImage,
-			Req:    &vo.LikeImageRequest{},
-		},
-		{
-			Name:   vo.CmdDownloadImg,
-			Method: http.MethodPost,
-			Path:   vo.PathDownloadImg,
-			Req:    &vo.DownloadImageRequest{},
+			Name:    vo.CmdLikeImage,
+			Method:  http.MethodPost,
+			Path:    vo.PathLikeImage,
+			Handler: AddDeltaImageProcessor,
+			Req:     &vo.AddDeltaImageRequest{},
 		},
 	}
 

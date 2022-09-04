@@ -21,16 +21,20 @@ func toVoImages(dbImages []*model.Image, userIDMap map[uint64]*model.User) []*vo
 	for _, img := range dbImages {
 		voImages = append(
 			voImages,
-			&vo.Image{
-				ID:        img.ID,
-				User:      toVoUser(userIDMap[*img.UserID]),
-				Url:       img.Url,
-				Desc:      img.Desc,
-				Likes:     img.Likes,
-				Downloads: img.Downloads,
-			},
+			toVoImage(img, userIDMap),
 		)
 	}
 
 	return voImages
+}
+
+func toVoImage(dbImage *model.Image, userIDMap map[uint64]*model.User) *vo.Image {
+	return &vo.Image{
+		ID:        dbImage.ID,
+		User:      toVoUser(userIDMap[*dbImage.UserID]),
+		Url:       dbImage.Url,
+		Desc:      dbImage.Desc,
+		Likes:     dbImage.Likes,
+		Downloads: dbImage.Downloads,
+	}
 }
