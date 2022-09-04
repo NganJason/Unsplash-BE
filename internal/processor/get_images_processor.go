@@ -13,12 +13,12 @@ import (
 	"github.com/NganJason/BE-template/pkg/server"
 )
 
-func CreateUserProcessor(
+func GetImagesProcessor(
 	ctx context.Context,
 	writer http.ResponseWriter,
 	req *http.Request,
 ) *server.HandlerResp {
-	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.CreateUserRequest)
+	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.GetImagesRequest)
 	if !ok {
 		return server.NewHandlerResp(
 			nil,
@@ -26,9 +26,9 @@ func CreateUserProcessor(
 		)
 	}
 
-	response := &vo.CreateUserResponse{}
+	response := &vo.GetImagesResponse{}
 
-	p := &createUserProcessor{
+	p := &getImagesProcessor{
 		ctx:  ctx,
 		req:  request,
 		resp: response,
@@ -37,13 +37,13 @@ func CreateUserProcessor(
 	return p.process()
 }
 
-type createUserProcessor struct {
+type getImagesProcessor struct {
 	ctx  context.Context
-	req  *vo.CreateUserRequest
-	resp *vo.CreateUserResponse
+	req  *vo.GetImagesRequest
+	resp *vo.GetImagesResponse
 }
 
-func (p *createUserProcessor) process() *server.HandlerResp {
+func (p *getImagesProcessor) process() *server.HandlerResp {
 	if err := p.validateReq(); err != nil {
 		return server.NewHandlerResp(
 			nil,
@@ -54,11 +54,18 @@ func (p *createUserProcessor) process() *server.HandlerResp {
 		)
 	}
 
+	imageDM := model.NewImageDM(p.ctx)
 	userDM := model.NewUserDM(p.ctx)
-	h := handler.NewUserHandler(p.ctx, userDM)
 
-	user, err := h.CreateUser(
-		p.req,
+	h := handler.NewImageHandler(
+		p.ctx,
+		imageDM,
+		userDM,
+	)
+
+	images, nextCursor, err := h.GetImages(
+		p.req.PageSize,
+		p.req.Cursor,
 	)
 	if err != nil {
 		return server.NewHandlerResp(
@@ -67,7 +74,8 @@ func (p *createUserProcessor) process() *server.HandlerResp {
 		)
 	}
 
-	p.resp.User = user
+	p.resp.Images = images
+	p.resp.NextCursor = nextCursor
 
 	return server.NewHandlerResp(
 		p.resp,
@@ -75,18 +83,9 @@ func (p *createUserProcessor) process() *server.HandlerResp {
 	)
 }
 
-func (p *createUserProcessor) validateReq() error {
-	if p.req.EmailAddress == nil || *p.req.EmailAddress == "" {
-		return fmt.Errorf("email address cannot be empty")
+func (p *getImagesProcessor) validateReq() error {
+	if p.req.PageSize == nil || *p.req.PageSize == 0 {
+		fmt.Errorf("page size cannot be empty")
 	}
-
-	if p.req.Password == nil || *p.req.Password == "" {
-		return fmt.Errorf("password cannot be empty")
-	}
-
-	if p.req.Username == nil || *p.req.Username == "" {
-		return fmt.Errorf("username cannot be empty")
-	}
-
 	return nil
 }

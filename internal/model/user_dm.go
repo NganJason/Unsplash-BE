@@ -12,11 +12,11 @@ func NewUserDM(ctx context.Context) UserDM {
 	}
 }
 
-func (dm *userDM) GetUserByID(userID *uint64) (*User, error) {
+func (dm *userDM) GetUserByIDs(userIDs []uint64) ([]*User, error) {
 	return nil, nil
 }
 
-func (dm *userDM) GetUserByEmail(email *string) (*User, error) {
+func (dm *userDM) GetUserByEmails(emails []string) ([]*User, error) {
 	return nil, nil
 }
 

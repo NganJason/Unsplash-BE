@@ -1,8 +1,8 @@
 package model
 
 type UserDM interface {
-	GetUserByID(userID *uint64) (*User, error)
-	GetUserByEmail(email *string) (*User, error)
+	GetUserByIDs(userID []uint64) ([]*User, error)
+	GetUserByEmails(email []string) ([]*User, error)
 
 	CreateUser(req *CreateUserReq) (*User, error)
 }
