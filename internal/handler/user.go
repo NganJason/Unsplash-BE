@@ -143,7 +143,8 @@ func (h *userHandler) likeImage(userID, imageID uint64) error {
 
 	_, err = h.imageDM.AddDeltaImage(
 		&model.AddDeltaImageReq{
-			Likes: util.Uint32Ptr(uint32(1)),
+			ImageID: imageID,
+			Likes:   util.Uint32Ptr(uint32(1)),
 		},
 	)
 	if err != nil {
@@ -156,6 +157,7 @@ func (h *userHandler) likeImage(userID, imageID uint64) error {
 func (h *userHandler) downloadImage(userID, imageID uint64) error {
 	_, err := h.imageDM.AddDeltaImage(
 		&model.AddDeltaImageReq{
+			ImageID:   imageID,
 			Downloads: util.Uint32Ptr(uint32(1)),
 		},
 	)

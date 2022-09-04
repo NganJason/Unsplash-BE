@@ -92,7 +92,7 @@ func (h *imageHandler) UploadImage(
 		)
 	}
 
-	image, err := h.imageDM.UploadImage(url, userID, desc)
+	image, err := h.imageDM.CreateImage(url, userID, desc)
 
 	userIDs := h.extractUserIDs([]*model.Image{image})
 	users, err := h.userDM.GetUserByIDs(userIDs)
