@@ -67,7 +67,9 @@ type GetImagesResponse struct {
 	NextCursor *string  `json:"next_cursor"`
 }
 
-type UploadImageRequest struct{}
+type UploadImageRequest struct {
+	Desc *string `json:"desc"`
+}
 
 type UploadImageResponse struct {
 	CommonResponse

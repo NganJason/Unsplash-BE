@@ -60,8 +60,8 @@ func (p *getImagesProcessor) process() *server.HandlerResp {
 	h := handler.NewImageHandler(
 		p.ctx,
 		imageDM,
-		userDM,
 	)
+	h.SetUserDM(userDM)
 
 	images, nextCursor, err := h.GetImages(
 		p.req.PageSize,
@@ -85,7 +85,7 @@ func (p *getImagesProcessor) process() *server.HandlerResp {
 
 func (p *getImagesProcessor) validateReq() error {
 	if p.req.PageSize == nil || *p.req.PageSize == 0 {
-		fmt.Errorf("page size cannot be empty")
+		return fmt.Errorf("page size cannot be empty")
 	}
 	return nil
 }

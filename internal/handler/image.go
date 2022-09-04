@@ -9,27 +9,39 @@ import (
 	"time"
 
 	"github.com/NganJason/BE-template/internal/model"
+	"github.com/NganJason/BE-template/internal/service"
 	"github.com/NganJason/BE-template/internal/util"
 	"github.com/NganJason/BE-template/internal/vo"
 	"github.com/NganJason/BE-template/pkg/cerr"
 )
 
 type imageHandler struct {
-	ctx     context.Context
-	imageDM model.ImageDM
-	userDM  model.UserDM
+	ctx          context.Context
+	imageDM      model.ImageDM
+	userDM       model.UserDM
+	imageService service.ImageService
 }
 
 func NewImageHandler(
 	ctx context.Context,
 	imageDM model.ImageDM,
-	userDM model.UserDM,
 ) *imageHandler {
 	return &imageHandler{
 		ctx:     ctx,
 		imageDM: imageDM,
-		userDM:  userDM,
 	}
+}
+
+func (h *imageHandler) SetUserDM(
+	userDM model.UserDM,
+) {
+	h.userDM = userDM
+}
+
+func (h *imageHandler) SetImageService(
+	imageService service.ImageService,
+) {
+	h.imageService = imageService
 }
 
 func (h *imageHandler) GetImages(
@@ -65,6 +77,31 @@ func (h *imageHandler) GetImages(
 	userIDMap := h.getUserIDMap(users)
 
 	return toVoImages(images, userIDMap), nextCursor, nil
+}
+
+func (h *imageHandler) UploadImage(
+	fileBytes []byte,
+	userID uint64,
+	desc *string,
+) (*vo.Image, error) {
+	url, err := h.imageService.UploadImage(fileBytes)
+	if err != nil {
+		return nil, cerr.New(
+			fmt.Sprintf("upload img err=%s", err.Error()),
+			http.StatusBadGateway,
+		)
+	}
+
+	image, err := h.imageDM.UploadImage(url, userID, desc)
+
+	userIDs := h.extractUserIDs([]*model.Image{image})
+	users, err := h.userDM.GetUserByIDs(userIDs)
+	if err != nil {
+		return nil, err
+	}
+	userIDMap := h.getUserIDMap(users)
+
+	return toVoImage(image, userIDMap), nil
 }
 
 func (h *imageHandler) getCursorTimestamp(cursor *string) (uint64, error) {
