@@ -76,20 +76,19 @@ type UploadImageResponse struct {
 	Image *Image `json:"image"`
 }
 
-type LikeImageRequest struct {
-	ImageID *uint64 `json:"image_id"`
+type AddDeltaImageRequest struct {
+	ImageID    *uint64    `json:"image_id"`
+	DeltaImage DeltaImage `json:"delta_image"`
 }
 
-type LikeImageResponse struct {
+type DeltaImage struct {
+	Likes     *uint32 `json:"likes"`
+	Downloads *uint32 `json:"downloads"`
+}
+
+type AddDeltaImageResponse struct {
 	CommonResponse
-}
-
-type DownloadImageRequest struct {
-	ImageID *uint64 `json:"image_id"`
-}
-
-type DownloadImageResponse struct {
-	CommonResponse
+	Image *Image `json:"image"`
 }
 
 type User struct {
