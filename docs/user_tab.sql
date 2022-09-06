@@ -11,6 +11,7 @@ CREATE TABLE `unsplash_db`.`user_tab` (
     `created_at` bigint(20),
     `updated_at` bigint(20),
     PRIMARY KEY (`id`),
-    UNIQUE KEY (`id`,`username`, `email_address`),
+    UNIQUE KEY (`username`),
+    UNIQUE KEY (`email_address`),
     INDEX (username)
 );

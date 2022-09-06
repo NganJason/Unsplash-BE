@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/NganJason/BE-template/internal/model"
-	"github.com/NganJason/BE-template/internal/service"
-	"github.com/NganJason/BE-template/internal/util"
-	"github.com/NganJason/BE-template/internal/vo"
-	"github.com/NganJason/BE-template/pkg/cerr"
+	"github.com/NganJason/Unsplash-BE/internal/model"
+	"github.com/NganJason/Unsplash-BE/internal/service"
+	"github.com/NganJason/Unsplash-BE/internal/util"
+	"github.com/NganJason/Unsplash-BE/internal/vo"
+	"github.com/NganJason/Unsplash-BE/pkg/cerr"
 )
 
 type imageHandler struct {

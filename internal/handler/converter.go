@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/NganJason/BE-template/internal/model"
-	"github.com/NganJason/BE-template/internal/vo"
+	"github.com/NganJason/Unsplash-BE/internal/model"
+	"github.com/NganJason/Unsplash-BE/internal/vo"
 )
 
 func toVoUser(dbUser *model.User) *vo.User {

@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/NganJason/BE-template/internal/config"
-	"github.com/NganJason/BE-template/pkg/cerr"
+	"github.com/NganJason/Unsplash-BE/internal/config"
+	"github.com/NganJason/Unsplash-BE/pkg/cerr"
 )
 
 type userLikeDM struct {

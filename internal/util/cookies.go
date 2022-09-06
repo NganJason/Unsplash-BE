@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/NganJason/BE-template/pkg/cookies"
+	"github.com/NganJason/Unsplash-BE/pkg/cookies"
 )
 
 func GetUserIDFromCookies(ctx context.Context) (*uint64, error) {

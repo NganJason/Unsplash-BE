@@ -3,53 +3,53 @@ package processor
 import (
 	"net/http"
 
-	"github.com/NganJason/BE-template/internal/vo"
-	"github.com/NganJason/BE-template/pkg/server"
+	"github.com/NganJason/Unsplash-BE/internal/vo"
+	"github.com/NganJason/Unsplash-BE/pkg/server"
 )
 
 func AllProcessors() []*server.Route {
 	processors := []*server.Route{
 		{
 			Name:    vo.CmdHealthCheck,
-			Method:  http.MethodGet,
+			Method:  http.MethodPost,
 			Path:    vo.PathHealthCheck,
 			Handler: HealthCheck,
-			Req:     nil,
+			Req:     vo.HealthCheckRequest{},
 		},
 		{
 			Name:    vo.CmdGetUser,
 			Method:  http.MethodPost,
 			Path:    vo.PathGetUser,
 			Handler: GetUserProcessor,
-			Req:     &vo.GetUserRequest{},
+			Req:     vo.GetUserRequest{},
 		},
 		{
 			Name:    vo.CmdCreateUser,
 			Method:  http.MethodPost,
 			Path:    vo.PathCreateUser,
 			Handler: CreateUserProcessor,
-			Req:     &vo.CreateUserRequest{},
+			Req:     vo.CreateUserRequest{},
 		},
 		{
 			Name:    vo.CmdGetImages,
 			Method:  http.MethodPost,
 			Path:    vo.PathGetImages,
 			Handler: GetImagesProcessor,
-			Req:     &vo.GetImagesRequest{},
+			Req:     vo.GetImagesRequest{},
 		},
 		{
 			Name:    vo.CmdUploadImage,
 			Method:  http.MethodPost,
 			Path:    vo.PathUploadImage,
 			Handler: UploadImageProcessor,
-			Req:     &vo.UploadImageRequest{},
+			Req:     vo.UploadImageRequest{},
 		},
 		{
 			Name:    vo.CmdLikeImage,
 			Method:  http.MethodPost,
 			Path:    vo.PathLikeImage,
 			Handler: AddDeltaImageProcessor,
-			Req:     &vo.AddDeltaImageRequest{},
+			Req:     vo.AddDeltaImageRequest{},
 		},
 	}
 

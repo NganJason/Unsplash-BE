@@ -3,14 +3,15 @@ package processor
 import (
 	"context"
 	"net/http"
+	"strconv"
 
-	"github.com/NganJason/BE-template/internal"
-	"github.com/NganJason/BE-template/internal/handler"
-	"github.com/NganJason/BE-template/internal/model"
-	"github.com/NganJason/BE-template/internal/util"
-	"github.com/NganJason/BE-template/internal/vo"
-	"github.com/NganJason/BE-template/pkg/cerr"
-	"github.com/NganJason/BE-template/pkg/server"
+	"github.com/NganJason/Unsplash-BE/internal"
+	"github.com/NganJason/Unsplash-BE/internal/handler"
+	"github.com/NganJason/Unsplash-BE/internal/model"
+	"github.com/NganJason/Unsplash-BE/internal/util"
+	"github.com/NganJason/Unsplash-BE/internal/vo"
+	"github.com/NganJason/Unsplash-BE/pkg/cerr"
+	"github.com/NganJason/Unsplash-BE/pkg/server"
 )
 
 func GetUserProcessor(
@@ -18,29 +19,21 @@ func GetUserProcessor(
 	writer http.ResponseWriter,
 	req *http.Request,
 ) *server.HandlerResp {
+	response := &vo.GetUserResponse{}
+
 	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.GetUserRequest)
 	if !ok {
 		return server.NewHandlerResp(
-			nil,
+			response,
 			cerr.New("assert request err", http.StatusBadRequest),
 		)
 	}
 
-	response := &vo.GetUserResponse{}
-
-	userID, err := util.GetUserIDFromCookies(ctx)
-	if err != nil {
-		return server.NewHandlerResp(
-			nil,
-			cerr.New(
-				err.Error(),
-				http.StatusForbidden,
-			),
-		)
-	}
+	userID, _ := util.GetUserIDFromCookies(ctx)
 
 	p := &getUserProcessor{
 		ctx:    ctx,
+		writer: writer,
 		req:    request,
 		resp:   response,
 		userID: userID,
@@ -51,6 +44,7 @@ func GetUserProcessor(
 
 type getUserProcessor struct {
 	ctx    context.Context
+	writer http.ResponseWriter
 	req    *vo.GetUserRequest
 	resp   *vo.GetUserResponse
 	userID *uint64
@@ -68,10 +62,25 @@ func (p *getUserProcessor) process() *server.HandlerResp {
 	)
 	if err != nil {
 		return server.NewHandlerResp(
-			nil,
+			p.resp,
 			err,
 		)
 	}
+
+	cookie, err := util.GenerateCookies(
+		strconv.FormatUint(*user.ID, 10),
+	)
+	if err != nil {
+		return server.NewHandlerResp(
+			p.resp,
+			cerr.New(
+				err.Error(),
+				http.StatusBadGateway,
+			),
+		)
+	}
+
+	http.SetCookie(p.writer, cookie)
 
 	p.resp.User = user
 

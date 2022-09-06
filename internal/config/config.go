@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/NganJason/BE-template/pkg/cerr"
-	"github.com/NganJason/BE-template/pkg/clog"
+	"github.com/NganJason/Unsplash-BE/pkg/cerr"
+	"github.com/NganJason/Unsplash-BE/pkg/clog"
 )
 
 var (

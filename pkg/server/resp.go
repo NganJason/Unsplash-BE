@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/NganJason/BE-template/pkg/cerr"
+	"github.com/NganJason/Unsplash-BE/pkg/cerr"
 )
 
 type HandlerResp struct {

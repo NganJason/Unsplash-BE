@@ -9,8 +9,8 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"github.com/NganJason/BE-template/pkg/cerr"
-	"github.com/NganJason/BE-template/pkg/clog"
+	"github.com/NganJason/Unsplash-BE/pkg/cerr"
+	"github.com/NganJason/Unsplash-BE/pkg/clog"
 )
 
 type Database struct {
