@@ -42,7 +42,7 @@ func AllProcessors() []*server.Route {
 			Method:  http.MethodPost,
 			Path:    vo.PathUploadImage,
 			Handler: UploadImageProcessor,
-			Req:     vo.UploadImageRequest{},
+			Req:     nil,
 		},
 		{
 			Name:    vo.CmdLikeImage,

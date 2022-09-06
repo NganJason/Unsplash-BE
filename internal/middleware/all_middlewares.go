@@ -1,10 +1,17 @@
 package middleware
 
-import "github.com/NganJason/Unsplash-BE/pkg/server"
+import (
+	"github.com/NganJason/Unsplash-BE/internal/vo"
+	"github.com/NganJason/Unsplash-BE/pkg/server"
+)
 
 func AllMiddlewares() []server.Middleware {
+	parseBodyMiddleware := &ParseBodyMiddleware{}
+	parseBodyMiddleware.Skip(vo.CmdUploadImage)
+
 	middlewares := []server.Middleware{
-		&ParseBodyMiddleware{},
+		parseBodyMiddleware,
+		&ParseFileBodyMiddleware{},
 	}
 
 	return middlewares

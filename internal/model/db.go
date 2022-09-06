@@ -16,7 +16,7 @@ type Image struct {
 	ID        *uint64 `json:"id"`
 	UserID    *uint64 `json:"user_id"`
 	Url       *string `json:"url"`
-	Desc      *string `json:"desc"`
+	Desc      *string `json:"description"`
 	Likes     *uint32 `json:"likes"`
 	Downloads *uint32 `json:"downloads"`
 	CreatedAt *uint64 `json:"created_at"`
