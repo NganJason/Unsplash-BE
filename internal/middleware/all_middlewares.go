@@ -6,12 +6,22 @@ import (
 )
 
 func AllMiddlewares() []server.Middleware {
-	parseBodyMiddleware := &ParseBodyMiddleware{}
+	parseBodyMiddleware := new(ParseBodyMiddleware)
 	parseBodyMiddleware.Skip(vo.CmdUploadImage)
+
+	parseFileBodyMiddleware := new(ParseFileBodyMiddleware)
+
+	authMiddleware := new(AuthMiddleware)
+	authMiddleware.Skip(
+		vo.CmdGetUser,
+		vo.CmdCreateUser,
+		vo.CmdHealthCheck,
+	)
 
 	middlewares := []server.Middleware{
 		parseBodyMiddleware,
-		&ParseFileBodyMiddleware{},
+		parseFileBodyMiddleware,
+		authMiddleware,
 	}
 
 	return middlewares
