@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/NganJason/BE-template/pkg/clog"
+	"github.com/NganJason/Unsplash-BE/pkg/clog"
 	"github.com/gorilla/mux"
 )
 

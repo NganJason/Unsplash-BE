@@ -4,14 +4,14 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/NganJason/BE-template/internal"
-	"github.com/NganJason/BE-template/internal/handler"
-	"github.com/NganJason/BE-template/internal/model"
-	"github.com/NganJason/BE-template/internal/service"
-	"github.com/NganJason/BE-template/internal/util"
-	"github.com/NganJason/BE-template/internal/vo"
-	"github.com/NganJason/BE-template/pkg/cerr"
-	"github.com/NganJason/BE-template/pkg/server"
+	"github.com/NganJason/Unsplash-BE/internal"
+	"github.com/NganJason/Unsplash-BE/internal/handler"
+	"github.com/NganJason/Unsplash-BE/internal/model"
+	"github.com/NganJason/Unsplash-BE/internal/service"
+	"github.com/NganJason/Unsplash-BE/internal/util"
+	"github.com/NganJason/Unsplash-BE/internal/vo"
+	"github.com/NganJason/Unsplash-BE/pkg/cerr"
+	"github.com/NganJason/Unsplash-BE/pkg/server"
 )
 
 func UploadImageProcessor(

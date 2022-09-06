@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/NganJason/BE-template/internal/config"
-	"github.com/NganJason/BE-template/internal/middleware"
-	"github.com/NganJason/BE-template/internal/processor"
-	"github.com/NganJason/BE-template/pkg/clog"
-	"github.com/NganJason/BE-template/pkg/server"
+	"github.com/NganJason/Unsplash-BE/internal/config"
+	"github.com/NganJason/Unsplash-BE/internal/middleware"
+	"github.com/NganJason/Unsplash-BE/internal/processor"
+	"github.com/NganJason/Unsplash-BE/pkg/clog"
+	"github.com/NganJason/Unsplash-BE/pkg/server"
 )
 
 func main() {

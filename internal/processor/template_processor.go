@@ -4,10 +4,10 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/NganJason/BE-template/internal"
-	"github.com/NganJason/BE-template/internal/vo"
-	"github.com/NganJason/BE-template/pkg/cerr"
-	"github.com/NganJason/BE-template/pkg/server"
+	"github.com/NganJason/Unsplash-BE/internal"
+	"github.com/NganJason/Unsplash-BE/internal/vo"
+	"github.com/NganJason/Unsplash-BE/pkg/cerr"
+	"github.com/NganJason/Unsplash-BE/pkg/server"
 )
 
 func TemplateProcessor(

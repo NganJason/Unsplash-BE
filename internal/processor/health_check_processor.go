@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/NganJason/BE-template/internal/vo"
-	"github.com/NganJason/BE-template/pkg/server"
+	"github.com/NganJason/Unsplash-BE/internal"
+	"github.com/NganJason/Unsplash-BE/internal/vo"
+	"github.com/NganJason/Unsplash-BE/pkg/server"
 )
 
 func HealthCheck(ctx context.Context, writer http.ResponseWriter, req *http.Request) *server.HandlerResp {
-	// request := ctx.Value(internal.CtxRequestBody).(*vo.HealthCheckRequest)
+	request := ctx.Value(internal.CtxRequestBody).(*vo.HealthCheckRequest)
 
 	response := &vo.HealthCheckResponse{}
-	response.Message = fmt.Sprintf("Echo from server")
+	response.Message = fmt.Sprintf("Echo from server=%s", request.Message)
 
 	return server.NewHandlerResp(response, nil)
 }

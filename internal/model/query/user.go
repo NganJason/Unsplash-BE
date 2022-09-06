@@ -49,7 +49,7 @@ func (q *UserQuery) Build() (wheres string, args []interface{}) {
 	whereCols := make([]string, 0)
 
 	if len(q.ids) != 0 {
-		inCondition := "user_id IN (?"
+		inCondition := "id IN (?"
 
 		for i := 1; i < len(q.ids); i++ {
 			inCondition = inCondition + ",?"
@@ -63,7 +63,7 @@ func (q *UserQuery) Build() (wheres string, args []interface{}) {
 	}
 
 	if len(q.emails) != 0 {
-		inCondition := "username IN (?"
+		inCondition := "email_address IN (?"
 
 		for i := 1; i < len(q.emails); i++ {
 			inCondition = inCondition + ",?"

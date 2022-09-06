@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/NganJason/BE-template/internal/model"
-	"github.com/NganJason/BE-template/internal/util"
-	"github.com/NganJason/BE-template/internal/vo"
-	"github.com/NganJason/BE-template/pkg/auth"
-	"github.com/NganJason/BE-template/pkg/cerr"
+	"github.com/NganJason/Unsplash-BE/internal/model"
+	"github.com/NganJason/Unsplash-BE/internal/util"
+	"github.com/NganJason/Unsplash-BE/internal/vo"
+	"github.com/NganJason/Unsplash-BE/pkg/auth"
+	"github.com/NganJason/Unsplash-BE/pkg/cerr"
 )
 
 type userHandler struct {
@@ -71,7 +71,7 @@ func (h *userHandler) GetUser(
 	users, err := h.userDM.GetUserByEmails([]string{*emailAddress})
 	if err != nil {
 		return nil, cerr.New(
-			fmt.Sprintf("get user by username err=%s", err.Error()),
+			fmt.Sprintf("get user by email err=%s", err.Error()),
 			http.StatusBadGateway,
 		)
 	}
@@ -101,7 +101,7 @@ func (h *userHandler) GetUser(
 }
 
 func (h *userHandler) CreateUser(req *vo.CreateUserRequest) (*vo.User, error) {
-	hashedPassword, saltString := auth.CreatePasswordSHA(*req.Password, 16)
+	hashedPassword, saltString := auth.CreatePasswordSHA(*req.Password, util.SaltSize)
 
 	user, err := h.userDM.CreateUser(
 		&model.CreateUserReq{
