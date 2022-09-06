@@ -109,7 +109,7 @@ func (h *imageHandler) UploadImage(
 
 func (h *imageHandler) getCursorTimestamp(cursor *string) (uint64, error) {
 	if cursor == nil {
-		return uint64(time.Now().Unix()), nil
+		return uint64(time.Now().UTC().UnixNano()), nil
 	}
 
 	cursorByte, err := b64.StdEncoding.DecodeString(*cursor)
