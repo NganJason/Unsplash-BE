@@ -18,15 +18,15 @@ func GetImagesProcessor(
 	writer http.ResponseWriter,
 	req *http.Request,
 ) *server.HandlerResp {
+	response := &vo.GetImagesResponse{}
+
 	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.GetImagesRequest)
 	if !ok {
 		return server.NewHandlerResp(
-			nil,
+			response,
 			cerr.New("assert request err", http.StatusBadRequest),
 		)
 	}
-
-	response := &vo.GetImagesResponse{}
 
 	p := &getImagesProcessor{
 		ctx:  ctx,
@@ -46,7 +46,7 @@ type getImagesProcessor struct {
 func (p *getImagesProcessor) process() *server.HandlerResp {
 	if err := p.validateReq(); err != nil {
 		return server.NewHandlerResp(
-			nil,
+			p.resp,
 			cerr.New(
 				err.Error(),
 				http.StatusBadRequest,
@@ -69,7 +69,7 @@ func (p *getImagesProcessor) process() *server.HandlerResp {
 	)
 	if err != nil {
 		return server.NewHandlerResp(
-			nil,
+			p.resp,
 			err,
 		)
 	}
