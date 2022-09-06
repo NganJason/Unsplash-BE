@@ -19,20 +19,12 @@ func UploadImageProcessor(
 	writer http.ResponseWriter,
 	req *http.Request,
 ) *server.HandlerResp {
-	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.UploadImageRequest)
-	if !ok {
-		return server.NewHandlerResp(
-			nil,
-			cerr.New("assert request err", http.StatusBadRequest),
-		)
-	}
-
 	response := &vo.UploadImageResponse{}
 
 	userID, err := util.GetUserIDFromCookies(ctx)
 	if err != nil {
 		return server.NewHandlerResp(
-			nil,
+			response,
 			cerr.New(
 				err.Error(),
 				http.StatusForbidden,
@@ -42,7 +34,6 @@ func UploadImageProcessor(
 
 	p := &uploadImageResponse{
 		ctx:    ctx,
-		req:    request,
 		resp:   response,
 		userID: userID,
 	}
@@ -58,10 +49,10 @@ type uploadImageResponse struct {
 }
 
 func (p *uploadImageResponse) process() *server.HandlerResp {
-	file := p.ctx.Value(internal.CtxFileBody)
+	file := p.ctx.Value(internal.CtxFormBodyImg)
 	if file == nil {
 		return server.NewHandlerResp(
-			nil,
+			p.resp,
 			cerr.New(
 				"cannot parse file",
 				http.StatusBadGateway,
@@ -72,7 +63,7 @@ func (p *uploadImageResponse) process() *server.HandlerResp {
 	fileBytes, _ := file.([]byte)
 	if fileBytes == nil {
 		return server.NewHandlerResp(
-			nil,
+			p.resp,
 			cerr.New(
 				"assert file error",
 				http.StatusBadGateway,
@@ -94,11 +85,11 @@ func (p *uploadImageResponse) process() *server.HandlerResp {
 	image, err := h.UploadImage(
 		fileBytes,
 		*p.userID,
-		p.req.Desc,
+		util.StrPtr(""),
 	)
 	if err != nil {
 		return server.NewHandlerResp(
-			nil,
+			p.resp,
 			err,
 		)
 	}

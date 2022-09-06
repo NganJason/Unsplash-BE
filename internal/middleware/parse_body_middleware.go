@@ -26,7 +26,7 @@ func (*ParseBodyMiddleware) PreRequest(handler server.Handler) server.Handler {
 		var reqPayload interface{}
 		body, _ := ioutil.ReadAll(req.Body)
 
-		if len(body) > 0 || requestStruct != nil {
+		if requestStruct != nil {
 			if requestStruct != nil {
 				reqPayload = reflect.New(reflect.TypeOf(requestStruct)).Interface()
 			} else {

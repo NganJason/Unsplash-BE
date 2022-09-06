@@ -75,7 +75,7 @@ func (dm *imageDM) CreateImage(
 	q := fmt.Sprintf(
 		`
 		INSERT INTO %s 
-		(user_id, url, desc, likes, downloads, created_at, updated_at) 
+		(user_id, url, description, likes, downloads, created_at, updated_at) 
 		VALUES(?, ?, ?, ?, ?, ?, ?)
 		`, dm.getTableName(),
 	)

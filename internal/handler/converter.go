@@ -29,9 +29,14 @@ func toVoImages(dbImages []*model.Image, userIDMap map[uint64]*model.User) []*vo
 }
 
 func toVoImage(dbImage *model.Image, userIDMap map[uint64]*model.User) *vo.Image {
+	var user *vo.User
+	if dbUser, ok := userIDMap[*dbImage.UserID]; ok {
+		user = toVoUser(dbUser)
+	}
+
 	return &vo.Image{
 		ID:        dbImage.ID,
-		User:      toVoUser(userIDMap[*dbImage.UserID]),
+		User:      user,
 		Url:       dbImage.Url,
 		Desc:      dbImage.Desc,
 		Likes:     dbImage.Likes,

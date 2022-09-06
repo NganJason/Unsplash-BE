@@ -31,20 +31,20 @@ func CreateUserProcessor(
 	}
 
 	p := &createUserProcessor{
-		ctx:  ctx,
+		ctx:    ctx,
 		writer: writer,
-		req:  request,
-		resp: response,
+		req:    request,
+		resp:   response,
 	}
 
 	return p.process()
 }
 
 type createUserProcessor struct {
-	ctx  context.Context
+	ctx    context.Context
 	writer http.ResponseWriter
-	req  *vo.CreateUserRequest
-	resp *vo.CreateUserResponse
+	req    *vo.CreateUserRequest
+	resp   *vo.CreateUserResponse
 }
 
 func (p *createUserProcessor) process() *server.HandlerResp {
