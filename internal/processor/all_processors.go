@@ -45,9 +45,9 @@ func AllProcessors() []*server.Route {
 			Req:     nil,
 		},
 		{
-			Name:    vo.CmdLikeImage,
+			Name:    vo.CmdAddDeltaImage,
 			Method:  http.MethodPost,
-			Path:    vo.PathLikeImage,
+			Path:    vo.PathAddDeltaImage,
 			Handler: AddDeltaImageProcessor,
 			Req:     vo.AddDeltaImageRequest{},
 		},

@@ -121,6 +121,10 @@ func (h *userHandler) CreateUser(req *vo.CreateUserRequest) (*vo.User, error) {
 }
 
 func (h *userHandler) AddDeltaImage(userID uint64, imageID uint64, deltaImage *vo.DeltaImage) error {
+	if deltaImage.Downloads != nil {
+		h.downloadImage(userID, imageID)
+	}
+
 	if deltaImage.Likes != nil {
 		err := h.likeImage(userID, imageID)
 		if err != nil {
@@ -128,15 +132,26 @@ func (h *userHandler) AddDeltaImage(userID uint64, imageID uint64, deltaImage *v
 		}
 	}
 
-	if deltaImage.Downloads != nil {
-		h.downloadImage(userID, imageID)
-	}
-
 	return nil
 }
 
 func (h *userHandler) likeImage(userID, imageID uint64) error {
-	err := h.userLikeDM.CreateUserLike(userID, imageID)
+	userLikes, err := h.userLikeDM.GetUserLikes(
+		&userID,
+		&imageID,
+	)
+	if err != nil {
+		return err
+	}
+
+	if len(userLikes) > 0 {
+		return cerr.New(
+			"duplicate like, ignore",
+			http.StatusBadRequest,
+		)
+	}
+
+	err = h.userLikeDM.CreateUserLike(userID, imageID)
 	if err != nil {
 		return err
 	}
@@ -161,6 +176,7 @@ func (h *userHandler) downloadImage(userID, imageID uint64) error {
 			Downloads: util.Uint32Ptr(uint32(1)),
 		},
 	)
+	fmt.Println("here", err)
 	if err != nil {
 		return err
 	}

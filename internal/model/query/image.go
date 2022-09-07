@@ -6,6 +6,7 @@ type ImageQuery struct {
 	ids      []uint64
 	cursor   *uint64
 	pageSize *uint32
+	orderBy  *string
 }
 
 func NewImageQuery() *ImageQuery {
@@ -36,6 +37,14 @@ func (q *ImageQuery) Cursor(
 	return q
 }
 
+func (q *ImageQuery) OrderBy(
+	orderBy *string,
+) *ImageQuery {
+	q.orderBy = orderBy
+
+	return q
+}
+
 func (q *ImageQuery) Build() (wheres string, args []interface{}) {
 	whereCols := make([]string, 0)
 
@@ -62,7 +71,9 @@ func (q *ImageQuery) Build() (wheres string, args []interface{}) {
 
 	wheres = strings.Join(whereCols, " AND ")
 
-	wheres += " ORDER BY created_at DESC"
+	if q.orderBy != nil {
+		wheres += " ORDER BY " + *q.orderBy
+	}
 
 	if q.pageSize != nil {
 		inCondition := " LIMIT ?"
