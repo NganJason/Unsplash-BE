@@ -28,15 +28,13 @@ func NewImageDM(ctx context.Context) ImageDM {
 func (dm *imageDM) GetImages(cursor *uint64, pageSize uint32) ([]*Image, error) {
 	q := query.NewImageQuery()
 	q.Cursor(cursor).PageSize(util.Uint32Ptr(pageSize))
+	q.OrderBy(util.StrPtr("created_at DESC"))
 
 	wheres, args := q.Build()
 	baseQuery := fmt.Sprintf(
 		`SELECT * from %s WHERE `,
 		dm.getTableName(),
 	)
-
-	fmt.Println(wheres)
-	fmt.Println(args)
 
 	rows, err := dm.db.Query(
 		baseQuery+wheres,
@@ -223,11 +221,11 @@ func (dm *imageDM) AddDeltaImage(req *AddDeltaImageReq) (*Image, error) {
 	}
 
 	if req.Downloads != nil {
-		existingImage.Downloads = req.Downloads
+		*existingImage.Downloads += *req.Downloads
 	}
 
 	if req.Likes != nil {
-		existingImage.Likes = req.Likes
+		*existingImage.Likes += *req.Likes
 	}
 
 	existingImage.UpdatedAt = util.Uint64Ptr(uint64(time.Now().UTC().UnixNano()))

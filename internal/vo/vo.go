@@ -1,23 +1,22 @@
 package vo
 
 const (
-	CmdHealthCheck = "CmdHealthCheck"
-	CmdGetUser     = "CmdGetUser"
-	CmdCreateUser  = "CmdCreateUser"
-	CmdGetImages   = "CmdGetImages"
-	CmdUploadImage = "CmdUploadImg"
-	CmdLikeImage   = "CmdLikeImage"
-	CmdDownloadImg = "CmdDownloadImg"
+	CmdHealthCheck   = "CmdHealthCheck"
+	CmdGetUser       = "CmdGetUser"
+	CmdCreateUser    = "CmdCreateUser"
+	CmdGetImages     = "CmdGetImages"
+	CmdUploadImage   = "CmdUploadImg"
+	CmdAddDeltaImage = "CmdAddDeltaImage"
+	CmdDownloadImg   = "CmdDownloadImg"
 )
 
 const (
-	PathHealthCheck = "/api/healthcheck"
-	PathGetUser     = "/api/user/get"
-	PathCreateUser  = "/api/user/create"
-	PathGetImages   = "/api/image/get_all"
-	PathUploadImage = "/api/image/upload"
-	PathLikeImage   = "/api/image/like"
-	PathDownloadImg = "/api/image/downlaod"
+	PathHealthCheck   = "/api/healthcheck"
+	PathGetUser       = "/api/user/get"
+	PathCreateUser    = "/api/user/create"
+	PathGetImages     = "/api/image/get_all"
+	PathUploadImage   = "/api/image/upload"
+	PathAddDeltaImage = "/api/image/add_delta"
 )
 
 type CommonResponse struct {

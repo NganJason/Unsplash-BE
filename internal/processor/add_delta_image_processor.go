@@ -18,20 +18,20 @@ func AddDeltaImageProcessor(
 	writer http.ResponseWriter,
 	req *http.Request,
 ) *server.HandlerResp {
+	response := &vo.AddDeltaImageResponse{}
+
 	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.AddDeltaImageRequest)
 	if !ok {
 		return server.NewHandlerResp(
-			nil,
+			response,
 			cerr.New("assert request err", http.StatusBadRequest),
 		)
 	}
 
-	response := &vo.AddDeltaImageResponse{}
-
 	userID, err := util.GetUserIDFromCookies(ctx)
 	if err != nil {
 		return server.NewHandlerResp(
-			nil,
+			response,
 			cerr.New(
 				err.Error(),
 				http.StatusForbidden,
@@ -68,7 +68,7 @@ func (p *addDeltaImageProcessor) process() *server.HandlerResp {
 	err := h.AddDeltaImage(*p.userID, *p.req.ImageID, &p.req.DeltaImage)
 	if err != nil {
 		return server.NewHandlerResp(
-			nil,
+			p.resp,
 			err,
 		)
 	}

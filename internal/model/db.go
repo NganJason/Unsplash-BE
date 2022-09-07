@@ -38,6 +38,7 @@ type ImageTag struct {
 }
 
 type UserLike struct {
+	ID        *uint64 `json:"id"`
 	UserID    *uint64 `json:"user_id"`
 	ImageID   *uint64 `json:"image_id"`
 	CreatedAt *uint64 `json:"created_at"`
