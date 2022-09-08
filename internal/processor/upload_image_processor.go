@@ -2,6 +2,7 @@ package processor
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/NganJason/Unsplash-BE/internal"
@@ -31,7 +32,7 @@ func UploadImageProcessor(
 			),
 		)
 	}
-
+	
 	p := &uploadImageResponse{
 		ctx:    ctx,
 		resp:   response,
@@ -73,7 +74,16 @@ func (p *uploadImageResponse) process() *server.HandlerResp {
 
 	imageDM := model.NewImageDM(p.ctx)
 	userDM := model.NewUserDM(p.ctx)
-	imageService := service.NewImageService(p.ctx)
+	imageService, err := service.NewImageService(p.ctx)
+	if err != nil {
+		return server.NewHandlerResp(
+			p.resp,
+			cerr.New(
+				fmt.Sprintf("init cloudinary err=%s", err.Error()),
+				http.StatusBadGateway,
+			),
+		)
+	}
 
 	h := handler.NewImageHandler(
 		p.ctx,
