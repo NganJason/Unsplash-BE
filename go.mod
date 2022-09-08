@@ -10,3 +10,9 @@ require (
 	github.com/joho/godotenv v1.4.0
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90
 )
+
+require (
+	github.com/cloudinary/cloudinary-go/v2 v2.1.0 // indirect
+	github.com/creasty/defaults v1.5.1 // indirect
+	github.com/gorilla/schema v1.2.0 // indirect
+)
