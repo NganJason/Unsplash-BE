@@ -9,6 +9,7 @@ const (
 	CmdAddDeltaImage = "CmdAddDeltaImage"
 	CmdDownloadImg   = "CmdDownloadImg"
 	CmdLogin         = "CmdLogin"
+	CmdLogout        = "CmdLogout"
 )
 
 const (
@@ -16,6 +17,7 @@ const (
 	PathGetUser       = "/api/user/get"
 	PathCreateUser    = "/api/user/create"
 	PathLogin         = "/api/user/login"
+	PathLogout        = "/api/user/logout"
 	PathGetImages     = "/api/image/get_all"
 	PathUploadImage   = "/api/image/upload"
 	PathAddDeltaImage = "/api/image/add_delta"
