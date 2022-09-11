@@ -24,6 +24,13 @@ func AllProcessors() []*server.Route {
 			Req:     vo.LoginRequest{},
 		},
 		{
+			Name:    vo.CmdLogout,
+			Method:  http.MethodPost,
+			Path:    vo.PathLogout,
+			Handler: LogoutProcessor,
+			Req:     nil,
+		},
+		{
 			Name:    vo.CmdGetUser,
 			Method:  http.MethodPost,
 			Path:    vo.PathGetUser,
