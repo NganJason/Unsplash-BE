@@ -32,7 +32,7 @@ func UploadImageProcessor(
 			),
 		)
 	}
-	
+
 	p := &uploadImageResponse{
 		ctx:    ctx,
 		resp:   response,

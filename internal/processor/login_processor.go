@@ -2,10 +2,10 @@ package processor
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/NganJason/Unsplash-BE/internal"
 	"github.com/NganJason/Unsplash-BE/internal/handler"
 	"github.com/NganJason/Unsplash-BE/internal/model"
 	"github.com/NganJason/Unsplash-BE/internal/util"
@@ -14,61 +14,47 @@ import (
 	"github.com/NganJason/Unsplash-BE/pkg/server"
 )
 
-func GetUserProcessor(
+func LoginProcessor(
 	ctx context.Context,
 	writer http.ResponseWriter,
 	req *http.Request,
 ) *server.HandlerResp {
-	response := &vo.GetUserResponse{}
+	response := &vo.LoginResponse{}
 
-	userID, err := util.GetUserIDFromCookies(ctx)
-	if err != nil {
+	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.LoginRequest)
+	if !ok {
 		return server.NewHandlerResp(
 			response,
-			cerr.New(
-				fmt.Sprintf("parse cookie err=%s", err.Error()),
-				http.StatusUnauthorized,
-			),
+			cerr.New("assert request err", http.StatusBadRequest),
 		)
 	}
 
-	if userID == nil {
-		return server.NewHandlerResp(
-			response,
-			cerr.New(
-				"userID is nil in cookies",
-				http.StatusUnauthorized,
-			),
-		)
-	}
-
-	p := &getUserProcessor{
+	p := &loginProcessor{
 		ctx:    ctx,
 		writer: writer,
+		req:    request,
 		resp:   response,
-		userID: userID,
 	}
 
 	return p.process()
 }
 
-type getUserProcessor struct {
+type loginProcessor struct {
 	ctx    context.Context
 	writer http.ResponseWriter
-	req    *vo.GetUserRequest
-	resp   *vo.GetUserResponse
-	userID *uint64
+	req    *vo.LoginRequest
+	resp   *vo.LoginResponse
 }
 
-func (p *getUserProcessor) process() *server.HandlerResp {
+func (p *loginProcessor) process() *server.HandlerResp {
 	userDM := model.NewUserDM(p.ctx)
 
 	h := handler.NewUserHandler(p.ctx, userDM)
 
 	user, err := h.GetUser(
-		p.userID,
 		nil,
-		nil,
+		p.req.EmailAddress,
+		p.req.Password,
 	)
 	if err != nil {
 		return server.NewHandlerResp(
