@@ -16,15 +16,15 @@ type ImageService interface {
 }
 
 type cloudinaryService struct {
-	ctx context.Context
+	ctx   context.Context
 	cloud *cloudinary.Cloudinary
 }
 
 const (
 	cloudName = "di5bqamzn"
-	apiKey = "177489556145968"
+	apiKey    = "177489556145968"
 	apiSecret = "JaL7x6FqJH9QHx-mfuZI_IbIJX8"
-	folder = "test_img"
+	folder    = "test_img"
 )
 
 func NewImageService(ctx context.Context) (ImageService, error) {
@@ -38,7 +38,7 @@ func NewImageService(ctx context.Context) (ImageService, error) {
 	}
 
 	return &cloudinaryService{
-		ctx: ctx,
+		ctx:   ctx,
 		cloud: cloudinaryClient,
 	}, nil
 }

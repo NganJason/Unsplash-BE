@@ -8,12 +8,14 @@ const (
 	CmdUploadImage   = "CmdUploadImg"
 	CmdAddDeltaImage = "CmdAddDeltaImage"
 	CmdDownloadImg   = "CmdDownloadImg"
+	CmdLogin         = "CmdLogin"
 )
 
 const (
 	PathHealthCheck   = "/api/healthcheck"
 	PathGetUser       = "/api/user/get"
 	PathCreateUser    = "/api/user/create"
+	PathLogin         = "/api/user/login"
 	PathGetImages     = "/api/image/get_all"
 	PathUploadImage   = "/api/image/upload"
 	PathAddDeltaImage = "/api/image/add_delta"
@@ -32,12 +34,19 @@ type HealthCheckResponse struct {
 	Message string `json:"message"`
 }
 
-type GetUserRequest struct {
+type GetUserRequest struct{}
+
+type GetUserResponse struct {
+	CommonResponse
+	User *User `json:"user"`
+}
+
+type LoginRequest struct {
 	EmailAddress *string `json:"email_address"`
 	Password     *string `json:"password"`
 }
 
-type GetUserResponse struct {
+type LoginResponse struct {
 	CommonResponse
 	User *User `json:"user"`
 }

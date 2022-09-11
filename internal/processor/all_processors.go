@@ -17,6 +17,13 @@ func AllProcessors() []*server.Route {
 			Req:     vo.HealthCheckRequest{},
 		},
 		{
+			Name:    vo.CmdLogin,
+			Method:  http.MethodPost,
+			Path:    vo.PathLogin,
+			Handler: LoginProcessor,
+			Req:     vo.LoginRequest{},
+		},
+		{
 			Name:    vo.CmdGetUser,
 			Method:  http.MethodPost,
 			Path:    vo.PathGetUser,

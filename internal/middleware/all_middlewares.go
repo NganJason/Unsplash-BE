@@ -13,7 +13,7 @@ func AllMiddlewares() []server.Middleware {
 
 	authMiddleware := new(AuthMiddleware)
 	authMiddleware.Skip(
-		vo.CmdGetUser,
+		vo.CmdLogin,
 		vo.CmdCreateUser,
 		vo.CmdHealthCheck,
 	)

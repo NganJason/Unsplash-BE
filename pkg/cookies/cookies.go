@@ -79,8 +79,8 @@ func CreateCookie(value string, options ...cookieOption) *http.Cookie {
 		Path:     "/",
 		MaxAge:   10 * 60,
 		Expires:  time.Now().Add(1 * time.Hour),
-		HttpOnly: false,
-		Secure:   false,
+		HttpOnly: true,
+		Secure:   true,
 		SameSite: http.SameSiteNoneMode,
 	}
 
