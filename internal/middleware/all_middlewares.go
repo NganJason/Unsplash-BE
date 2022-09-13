@@ -17,6 +17,7 @@ func AllMiddlewares() []server.Middleware {
 		vo.CmdLogout,
 		vo.CmdCreateUser,
 		vo.CmdHealthCheck,
+		vo.CmdGetImages,
 	)
 
 	middlewares := []server.Middleware{
