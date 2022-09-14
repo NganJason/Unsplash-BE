@@ -1,26 +1,30 @@
 package vo
 
 const (
-	CmdHealthCheck   = "CmdHealthCheck"
-	CmdGetUser       = "CmdGetUser"
-	CmdCreateUser    = "CmdCreateUser"
-	CmdGetImages     = "CmdGetImages"
-	CmdUploadImage   = "CmdUploadImg"
-	CmdAddDeltaImage = "CmdAddDeltaImage"
-	CmdDownloadImg   = "CmdDownloadImg"
-	CmdLogin         = "CmdLogin"
-	CmdLogout        = "CmdLogout"
+	CmdHealthCheck      = "CmdHealthCheck"
+	CmdGetUser          = "CmdGetUser"
+	CmdCreateUser       = "CmdCreateUser"
+	CmdGetImages        = "CmdGetImages"
+	CmdUploadImage      = "CmdUploadImg"
+	CmdAddDeltaImage    = "CmdAddDeltaImage"
+	CmdDownloadImg      = "CmdDownloadImg"
+	CmdLogin            = "CmdLogin"
+	CmdLogout           = "CmdLogout"
+	CmdSeedData         = "CmdSeedData"
+	CmdUpdateProfileImg = "CmdUpdateProfileImg"
 )
 
 const (
-	PathHealthCheck   = "/api/healthcheck"
-	PathGetUser       = "/api/user/get"
-	PathCreateUser    = "/api/user/create"
-	PathLogin         = "/api/user/login"
-	PathLogout        = "/api/user/logout"
-	PathGetImages     = "/api/image/get_all"
-	PathUploadImage   = "/api/image/upload"
-	PathAddDeltaImage = "/api/image/add_delta"
+	PathHealthCheck      = "/api/healthcheck"
+	PathGetUser          = "/api/user/get"
+	PathCreateUser       = "/api/user/create"
+	PathLogin            = "/api/user/login"
+	PathLogout           = "/api/user/logout"
+	PathGetImages        = "/api/image/get_all"
+	PathUploadImage      = "/api/image/upload"
+	PathAddDeltaImage    = "/api/image/add_delta"
+	PathSeedData         = "/api/data/seed"
+	PathUpdateProfileImg = "/api/user/profile"
 )
 
 type CommonResponse struct {
@@ -91,14 +95,14 @@ type AddDeltaImageRequest struct {
 	DeltaImage DeltaImage `json:"delta_image"`
 }
 
-type DeltaImage struct {
-	Likes     *uint32 `json:"likes"`
-	Downloads *uint32 `json:"downloads"`
-}
-
 type AddDeltaImageResponse struct {
 	CommonResponse
 	Image *Image `json:"image"`
+}
+
+type DeltaImage struct {
+	Likes     *uint32 `json:"likes"`
+	Downloads *uint32 `json:"downloads"`
 }
 
 type User struct {
@@ -107,6 +111,7 @@ type User struct {
 	EmailAddress *string `json:"email_address"`
 	FirstName    *string `json:"first_name"`
 	LastName     *string `json:"last_name"`
+	ProfileUrl   *string `json:"profile_url"`
 }
 
 type Image struct {
@@ -116,4 +121,25 @@ type Image struct {
 	Desc      *string `json:"desc"`
 	Likes     *uint32 `json:"likes"`
 	Downloads *uint32 `json:"downloads"`
+}
+
+type UpdateProfileImgRequest struct{}
+
+type UpdateProfileImgResponse struct {
+	CommonResponse
+	User *User `json:"user"`
+}
+
+type SeedDataRequest struct {
+	EmailAddress *string `json:"email_address"`
+	Password     *string `json:"password"`
+	Username     *string `json:"username"`
+	FirstName    *string `json:"first_name"`
+	LastName     *string `json:"last_name"`
+	ImageDesc    *string `json:"image_desc"`
+}
+
+type SeedDataResponse struct {
+	CommonResponse
+	Image *Image `json:"image"`
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/NganJason/Unsplash-BE/internal/model"
+	"github.com/NganJason/Unsplash-BE/internal/service"
 	"github.com/NganJason/Unsplash-BE/internal/util"
 	"github.com/NganJason/Unsplash-BE/internal/vo"
 	"github.com/NganJason/Unsplash-BE/pkg/auth"
@@ -13,10 +14,11 @@ import (
 )
 
 type userHandler struct {
-	ctx        context.Context
-	userDM     model.UserDM
-	userLikeDM model.UserLikeDM
-	imageDM    model.ImageDM
+	ctx          context.Context
+	userDM       model.UserDM
+	userLikeDM   model.UserLikeDM
+	imageDM      model.ImageDM
+	imageService service.ImageService
 }
 
 func NewUserHandler(
@@ -35,6 +37,10 @@ func (h *userHandler) SetUserLikeDM(userLikeDM model.UserLikeDM) {
 
 func (h *userHandler) SetImageDM(imageDM model.ImageDM) {
 	h.imageDM = imageDM
+}
+
+func (h *userHandler) SetImageService(imageService service.ImageService) {
+	h.imageService = imageService
 }
 
 func (h *userHandler) GetUser(
@@ -133,6 +139,29 @@ func (h *userHandler) AddDeltaImage(userID uint64, imageID uint64, deltaImage *v
 	}
 
 	return nil
+}
+
+func (h *userHandler) UpdateProfileImg(userID uint64, fileBytes []byte) (*vo.User, error) {
+	url, err := h.imageService.UploadImage(fileBytes)
+	if err != nil {
+		return nil, cerr.New(
+			fmt.Sprintf("upload img err=%s", err.Error()),
+			http.StatusBadGateway,
+		)
+	}
+
+	user, err := h.userDM.UpdateUser(&model.UpdateUserReq{
+		UserID:     userID,
+		ProfileUrl: util.StrPtr(url),
+	})
+	if err != nil {
+		return nil, cerr.New(
+			fmt.Sprintf("update user err=%s", err.Error()),
+			http.StatusBadGateway,
+		)
+	}
+
+	return toVoUser(user), nil
 }
 
 func (h *userHandler) likeImage(userID, imageID uint64) error {

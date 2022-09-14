@@ -5,6 +5,8 @@ const (
 	CtxResponseBody = "CtxResponseBody"
 	CtxFileBody     = "CtxFileBody"
 	CtxFormBodyImg  = "CtxFormBodyImg"
+	CtxFormBodyVal  = "CtxFormBodyVal"
+	CtxProfileImg   = "CtxProfileImg"
 )
 
 const (

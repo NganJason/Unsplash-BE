@@ -12,6 +12,7 @@ func toVoUser(dbUser *model.User) *vo.User {
 		EmailAddress: dbUser.EmailAddress,
 		FirstName:    dbUser.FirstName,
 		LastName:     dbUser.LastName,
+		ProfileUrl:   dbUser.ProfileUrl,
 	}
 }
 

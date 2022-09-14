@@ -45,6 +45,13 @@ func AllProcessors() []*server.Route {
 			Req:     vo.CreateUserRequest{},
 		},
 		{
+			Name:    vo.CmdUpdateProfileImg,
+			Method:  http.MethodPost,
+			Path:    vo.PathUpdateProfileImg,
+			Handler: UpdateProfileImgProcessor,
+			Req:     nil,
+		},
+		{
 			Name:    vo.CmdGetImages,
 			Method:  http.MethodPost,
 			Path:    vo.PathGetImages,
@@ -64,6 +71,13 @@ func AllProcessors() []*server.Route {
 			Path:    vo.PathAddDeltaImage,
 			Handler: AddDeltaImageProcessor,
 			Req:     vo.AddDeltaImageRequest{},
+		},
+		{
+			Name:    vo.CmdSeedData,
+			Method:  http.MethodPost,
+			Path:    vo.PathSeedData,
+			Handler: SeedDataProcessor,
+			Req:     nil,
 		},
 	}
 

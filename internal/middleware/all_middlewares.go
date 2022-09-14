@@ -7,7 +7,11 @@ import (
 
 func AllMiddlewares() []server.Middleware {
 	parseBodyMiddleware := new(ParseBodyMiddleware)
-	parseBodyMiddleware.Skip(vo.CmdUploadImage)
+	parseBodyMiddleware.Skip(
+		vo.CmdUploadImage,
+		vo.CmdSeedData,
+		vo.CmdUpdateProfileImg,
+	)
 
 	parseFileBodyMiddleware := new(ParseFileBodyMiddleware)
 
@@ -18,6 +22,7 @@ func AllMiddlewares() []server.Middleware {
 		vo.CmdCreateUser,
 		vo.CmdHealthCheck,
 		vo.CmdGetImages,
+		vo.CmdSeedData,
 	)
 
 	middlewares := []server.Middleware{

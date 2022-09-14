@@ -8,6 +8,7 @@ CREATE TABLE `unsplash_db`.`user_tab` (
     `salt` varchar(32) DEFAULT '',
     `last_name` varchar(32) DEFAULT '',
     `first_name` varchar(32) DEFAULT '',
+    `profile_url` LONGTEXT,
     `created_at` bigint(20),
     `updated_at` bigint(20),
     PRIMARY KEY (`id`),

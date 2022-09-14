@@ -9,6 +9,7 @@ import (
 
 	"github.com/NganJason/Unsplash-BE/internal/config"
 	"github.com/NganJason/Unsplash-BE/internal/model/query"
+	"github.com/NganJason/Unsplash-BE/internal/util"
 	"github.com/NganJason/Unsplash-BE/pkg/cerr"
 )
 
@@ -63,6 +64,7 @@ func (dm *userDM) GetUserByIDs(userIDs []uint64) ([]*User, error) {
 			&user.Salt,
 			&user.LastName,
 			&user.FirstName,
+			&user.ProfileUrl,
 			&user.CreatedAt,
 			&user.UpdatedAt,
 		); err != nil {
@@ -120,6 +122,7 @@ func (dm *userDM) GetUserByEmails(emails []string) ([]*User, error) {
 			&user.Salt,
 			&user.LastName,
 			&user.FirstName,
+			&user.ProfileUrl,
 			&user.CreatedAt,
 			&user.UpdatedAt,
 		); err != nil {
@@ -178,6 +181,135 @@ func (dm *userDM) CreateUser(req *CreateUserReq) (*User, error) {
 	}
 
 	return users[0], nil
+}
+
+func (dm *userDM) UpdateUser(req *UpdateUserReq) (*User, error) {
+	if req.UserID == 0 {
+		return nil, cerr.New(
+			"userID cannot be empty for update",
+			http.StatusBadRequest,
+		)
+	}
+
+	tx, err := dm.db.BeginTx(dm.ctx, nil)
+	if err != nil {
+		return nil, cerr.New(
+			fmt.Sprintf("begin tx for update err=%s", err.Error()),
+			http.StatusBadGateway,
+		)
+	}
+	defer tx.Rollback()
+
+	baseQuery := fmt.Sprintf(
+		`SELECT * from %s WHERE `,
+		dm.getTableName(),
+	)
+
+	q := query.NewUserQuery().ID(req.UserID)
+	wheres, args := q.Build()
+	finalQuery := baseQuery + wheres + "FOR UPDATE"
+
+	var existingUser User
+	err = tx.QueryRowContext(
+		dm.ctx,
+		finalQuery,
+		args...,
+	).Scan(
+		&existingUser.ID,
+		&existingUser.Username,
+		&existingUser.EmailAddress,
+		&existingUser.HashedPassword,
+		&existingUser.Salt,
+		&existingUser.LastName,
+		&existingUser.FirstName,
+		&existingUser.ProfileUrl,
+		&existingUser.CreatedAt,
+		&existingUser.UpdatedAt,
+	)
+	if err != nil {
+		return nil, cerr.New(
+			fmt.Sprintf("get existing user err=%s", err.Error()),
+			http.StatusBadGateway,
+		)
+	}
+
+	if existingUser.ID == nil {
+		return nil, cerr.New(
+			"user does not exist for update",
+			http.StatusBadRequest,
+		)
+	}
+
+	if req.Username != nil {
+		*existingUser.Username = *req.Username
+	}
+
+	if req.EmailAddress != nil {
+		*existingUser.EmailAddress = *req.EmailAddress
+	}
+
+	if req.HashedPassword != nil {
+		*existingUser.HashedPassword = *req.HashedPassword
+	}
+
+	if req.Salt != nil {
+		*existingUser.Salt = *req.Salt
+	}
+
+	if req.LastName != nil {
+		*existingUser.LastName = *req.LastName
+	}
+
+	if req.FirstName != nil {
+		*existingUser.FirstName = *req.FirstName
+	}
+
+	existingUser.FirstName = util.StrPtr("Peter")
+
+	if req.ProfileUrl != nil {
+		existingUser.ProfileUrl = req.ProfileUrl
+	}
+
+	existingUser.UpdatedAt = util.Uint64Ptr(uint64(time.Now().UTC().UnixNano()))
+
+	updateQuery := fmt.Sprintf(
+		`
+		UPDATE %s
+		SET username = ?, email_address = ?, hashed_password = ?, salt = ?, last_name = ?, first_name = ?, profile_url = ?, updated_at = ?
+		WHERE id = ?
+		`,
+		dm.getTableName(),
+	)
+
+	_, err = tx.ExecContext(
+		dm.ctx,
+		updateQuery,
+		existingUser.Username,
+		existingUser.EmailAddress,
+		existingUser.HashedPassword,
+		existingUser.Salt,
+		existingUser.LastName,
+		existingUser.FirstName,
+		existingUser.ProfileUrl,
+		existingUser.UpdatedAt,
+		existingUser.ID,
+	)
+	if err != nil {
+		return nil, cerr.New(
+			fmt.Sprintf("update user err=%s", err.Error()),
+			http.StatusBadGateway,
+		)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, cerr.New(
+			fmt.Sprintf("commit transaction err=%s", err.Error()),
+			http.StatusBadGateway,
+		)
+	}
+
+	return &existingUser, nil
 }
 
 func (dm *userDM) getTableName() string {
