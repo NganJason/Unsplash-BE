@@ -11,6 +11,7 @@ const (
 	jsonPath    = "./data.json"
 	numRequests = 20
 	startPage   = 1
+	pageSize    = 100
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	globalData := make([]Data, 0)
 
 	for i := 0; i < numRequests; i++ {
-		photos, resp, err := dm.GetPhotos(pageNum, 100)
+		photos, resp, err := dm.GetPhotos(pageNum, pageSize)
 		if err != nil {
 			log.Println(err)
 			log.Printf("current page num: %d", pageNum)
@@ -43,9 +44,21 @@ func main() {
 				continue
 			}
 
+			profileImgName := fmt.Sprintf(
+				imgPath,
+				*photo.ID+*photo.Photographer.ID,
+			)
+			profileImgPath, err := downloadFile(photo.Photographer.ProfileImage.Large.String(), profileImgName)
+			if err != nil {
+				log.Println(err)
+				log.Printf("current page num: %d", pageNum)
+				continue
+			}
+
 			d := Data{
-				Photo: photo,
-				Path:  absPath,
+				Photo:          photo,
+				Path:           absPath,
+				ProfileImgPath: profileImgPath,
 			}
 
 			globalData = append(globalData, d)

@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strconv"
 
+	"github.com/NganJason/Unsplash-BE/internal"
 	"github.com/NganJason/Unsplash-BE/internal/handler"
 	"github.com/NganJason/Unsplash-BE/internal/model"
-	"github.com/NganJason/Unsplash-BE/internal/util"
 	"github.com/NganJason/Unsplash-BE/internal/vo"
 	"github.com/NganJason/Unsplash-BE/pkg/cerr"
 	"github.com/NganJason/Unsplash-BE/pkg/server"
@@ -21,32 +20,19 @@ func GetUserProcessor(
 ) *server.HandlerResp {
 	response := &vo.GetUserResponse{}
 
-	userID, err := util.GetUserIDFromCookies(ctx)
-	if err != nil {
+	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.GetUserRequest)
+	if !ok {
 		return server.NewHandlerResp(
 			response,
-			cerr.New(
-				fmt.Sprintf("parse cookie err=%s", err.Error()),
-				http.StatusUnauthorized,
-			),
-		)
-	}
-
-	if userID == nil {
-		return server.NewHandlerResp(
-			response,
-			cerr.New(
-				"userID is nil in cookies",
-				http.StatusUnauthorized,
-			),
+			cerr.New("assert request err", http.StatusBadRequest),
 		)
 	}
 
 	p := &getUserProcessor{
 		ctx:    ctx,
 		writer: writer,
+		req:    request,
 		resp:   response,
-		userID: userID,
 	}
 
 	return p.process()
@@ -57,16 +43,24 @@ type getUserProcessor struct {
 	writer http.ResponseWriter
 	req    *vo.GetUserRequest
 	resp   *vo.GetUserResponse
-	userID *uint64
 }
 
 func (p *getUserProcessor) process() *server.HandlerResp {
-	userDM := model.NewUserDM(p.ctx)
+	if err := p.validateReq(); err != nil {
+		return server.NewHandlerResp(
+			p.resp,
+			cerr.New(
+				err.Error(),
+				http.StatusBadRequest,
+			),
+		)
+	}
 
+	userDM := model.NewUserDM(p.ctx)
 	h := handler.NewUserHandler(p.ctx, userDM)
 
 	user, err := h.GetUser(
-		p.userID,
+		p.req.UserID,
 		nil,
 		nil,
 	)
@@ -77,25 +71,18 @@ func (p *getUserProcessor) process() *server.HandlerResp {
 		)
 	}
 
-	cookie, err := util.GenerateCookies(
-		strconv.FormatUint(*user.ID, 10),
-	)
-	if err != nil {
-		return server.NewHandlerResp(
-			p.resp,
-			cerr.New(
-				err.Error(),
-				http.StatusBadGateway,
-			),
-		)
-	}
-
-	http.SetCookie(p.writer, cookie)
-
 	p.resp.User = user
 
 	return server.NewHandlerResp(
 		p.resp,
 		nil,
 	)
+}
+
+func (p *getUserProcessor) validateReq() error {
+	if p.req.UserID == nil || *p.req.UserID == 0 {
+		return fmt.Errorf("userID cannot be empty")
+	}
+
+	return nil
 }

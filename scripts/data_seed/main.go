@@ -3,8 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"os"
+	"strings"
 
 	"github.com/hbagdi/go-unsplash/unsplash"
 )
@@ -18,46 +21,65 @@ type SeedDataRequest struct {
 	ImageDesc    *string `json:"image_desc"`
 }
 
+const (
+	remoteURL = "http://localhost:8082/api/data/seed"
+)
+
 func main() {
-	// var remoteURL string
-	// remoteURL = "http://localhost:8082/api/data/seed"
-
-	// data := SeedDataRequest{
-	// 	EmailAddress: StrPtr("test1"),
-	// 	Password: StrPtr("123"),
-	// 	Username: StrPtr("test1"),
-	// 	FirstName: StrPtr("testFirst"),
-	// 	LastName: StrPtr("testLast"),
-	// 	ImageDesc: StrPtr("test_image"),
-	// }
-
-	// bytes, _ := json.Marshal(data)
-
-	// values := map[string]io.Reader{
-	//     "img":  mustOpen("_9b4PK2na7c.png"),
-	//     "data": strings.NewReader(string(bytes)),
-	// }
-
-	// err := Upload(remoteURL, values)
-	// if err != nil {
-	//     panic(err)
-	// }
 	data := getJsonData()
-	photoInfo := data[0].Photo
 
-	infoByte, _ := json.Marshal(photoInfo)
-	var info unsplash.Photo
+	for idx, info := range data {
+		photo := info.Photo
 
-	json.Unmarshal(infoByte, &info)
-	fmt.Println(*info.Photographer.Name)
+		req := SeedDataRequest{
+			EmailAddress: StrPtr(*photo.Photographer.Username + "@gmail.com"),
+			Password:     StrPtr("123"),
+			Username:     photo.Photographer.Username,
+			FirstName:    photo.Photographer.FirstName,
+			LastName:     photo.Photographer.LastName,
+			ImageDesc:    photo.Description,
+		}
 
+		bytes, _ := json.Marshal(req)
+
+		values := map[string]io.Reader{
+			"img":         mustOpen(info.Path),
+			"data":        strings.NewReader(string(bytes)),
+			"profile_img": mustOpen(info.ProfileImgPath),
+		}
+
+		err := Upload(remoteURL, values)
+		if err != nil {
+			log.Println(err.Error())
+			continue
+		}
+
+		log.Println(fmt.Sprintf("Processed img %d", idx))
+	}
 }
 
 type Data struct {
-	Photo interface{}
-	Path  string
+	Photo          unsplash.Photo `json:"Photo"`
+	Path           string         `json:"Path"`
+	ProfileImgPath string         `json:"ProfileImgPath"`
 }
 
+// func fetchPhotoInfos() {
+// 	data := getJsonData()
+// 	photos := make([]unsplash.Photo, 0)
+
+// 	for _, info := range data {
+// 		infoByte, _ := json.Marshal(info.Photo)
+
+// 	}
+// 	photoInfo := data[0].Photo
+
+// 	infoByte, _ := json.Marshal(photoInfo)
+// 	var info unsplash.Photo
+
+// 	json.Unmarshal(infoByte, &info)
+// 	fmt.Println(*info.Photographer.Name)
+// }
 func getJsonData() []Data {
 	jsonFile, _ := os.Open("../crawler/data.json")
 	jsonBytes, _ := ioutil.ReadAll(jsonFile)

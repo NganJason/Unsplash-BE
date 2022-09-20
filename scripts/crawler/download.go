@@ -41,8 +41,9 @@ func downloadFile(URL, fileName string) (string, error) {
 }
 
 type Data struct {
-	Photo interface{}
-	Path  string
+	Photo          interface{}
+	Path           string
+	ProfileImgPath string
 }
 
 func writeJsonData(output []Data) {

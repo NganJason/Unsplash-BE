@@ -264,8 +264,6 @@ func (dm *userDM) UpdateUser(req *UpdateUserReq) (*User, error) {
 		*existingUser.FirstName = *req.FirstName
 	}
 
-	existingUser.FirstName = util.StrPtr("Peter")
-
 	if req.ProfileUrl != nil {
 		existingUser.ProfileUrl = req.ProfileUrl
 	}

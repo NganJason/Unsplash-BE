@@ -2,8 +2,9 @@ package vo
 
 const (
 	CmdHealthCheck      = "CmdHealthCheck"
-	CmdGetUser          = "CmdGetUser"
+	CmdVerifyUser       = "CmdVerifyUser"
 	CmdCreateUser       = "CmdCreateUser"
+	CmdGetUser          = "CmdGetUser"
 	CmdGetImages        = "CmdGetImages"
 	CmdUploadImage      = "CmdUploadImg"
 	CmdAddDeltaImage    = "CmdAddDeltaImage"
@@ -16,8 +17,9 @@ const (
 
 const (
 	PathHealthCheck      = "/api/healthcheck"
-	PathGetUser          = "/api/user/get"
+	PathVerifyUser       = "/api/user/verify"
 	PathCreateUser       = "/api/user/create"
+	PathGetUser          = "/api/user/get"
 	PathLogin            = "/api/user/login"
 	PathLogout           = "/api/user/logout"
 	PathGetImages        = "/api/image/get_all"
@@ -40,9 +42,9 @@ type HealthCheckResponse struct {
 	Message string `json:"message"`
 }
 
-type GetUserRequest struct{}
+type VerifyUserRequest struct{}
 
-type GetUserResponse struct {
+type VerifyUserResponse struct {
 	CommonResponse
 	User *User `json:"user"`
 }
@@ -66,6 +68,15 @@ type CreateUserRequest struct {
 }
 
 type CreateUserResponse struct {
+	CommonResponse
+	User *User `json:"user"`
+}
+
+type GetUserRequest struct {
+	UserID *uint64 `json:"user_id"`
+}
+
+type GetUserResponse struct {
 	CommonResponse
 	User *User `json:"user"`
 }

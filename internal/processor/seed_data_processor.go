@@ -44,6 +44,28 @@ func SeedDataProcessor(
 		)
 	}
 
+	profileImg := ctx.Value(internal.CtxProfileImg)
+	if profileImg == nil {
+		return server.NewHandlerResp(
+			response,
+			cerr.New(
+				"cannot parse profileImg",
+				http.StatusBadGateway,
+			),
+		)
+	}
+
+	profileImgBytes, _ := profileImg.([]byte)
+	if profileImgBytes == nil {
+		return server.NewHandlerResp(
+			response,
+			cerr.New(
+				"assert profileImg error",
+				http.StatusBadGateway,
+			),
+		)
+	}
+
 	val := ctx.Value(internal.CtxFormBodyVal).(string)
 	var request vo.SeedDataRequest
 
@@ -59,22 +81,24 @@ func SeedDataProcessor(
 	}
 
 	p := &seedDataProcessor{
-		ctx:       ctx,
-		writer:    writer,
-		fileBytes: fileBytes,
-		req:       &request,
-		resp:      response,
+		ctx:             ctx,
+		writer:          writer,
+		fileBytes:       fileBytes,
+		profileImgBytes: profileImgBytes,
+		req:             &request,
+		resp:            response,
 	}
 
 	return p.process()
 }
 
 type seedDataProcessor struct {
-	ctx       context.Context
-	writer    http.ResponseWriter
-	fileBytes []byte
-	req       *vo.SeedDataRequest
-	resp      *vo.SeedDataResponse
+	ctx             context.Context
+	writer          http.ResponseWriter
+	fileBytes       []byte
+	profileImgBytes []byte
+	req             *vo.SeedDataRequest
+	resp            *vo.SeedDataResponse
 }
 
 func (p *seedDataProcessor) process() *server.HandlerResp {
@@ -92,6 +116,7 @@ func (p *seedDataProcessor) process() *server.HandlerResp {
 		p.ctx,
 		userDM,
 	)
+	userHandler.SetImageService(imageService)
 
 	imageHandler := handler.NewImageHandler(
 		p.ctx,
@@ -117,6 +142,17 @@ func (p *seedDataProcessor) process() *server.HandlerResp {
 				FirstName:    p.req.FirstName,
 				LastName:     p.req.LastName,
 			},
+		)
+		if err != nil {
+			return server.NewHandlerResp(
+				p.resp,
+				err,
+			)
+		}
+
+		user, err = userHandler.UpdateProfileImg(
+			*user.ID,
+			p.profileImgBytes,
 		)
 		if err != nil {
 			return server.NewHandlerResp(

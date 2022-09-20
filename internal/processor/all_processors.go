@@ -31,11 +31,11 @@ func AllProcessors() []*server.Route {
 			Req:     nil,
 		},
 		{
-			Name:    vo.CmdGetUser,
+			Name:    vo.CmdVerifyUser,
 			Method:  http.MethodPost,
-			Path:    vo.PathGetUser,
-			Handler: GetUserProcessor,
-			Req:     vo.GetUserRequest{},
+			Path:    vo.PathVerifyUser,
+			Handler: VerifyUserProcessor,
+			Req:     vo.VerifyUserRequest{},
 		},
 		{
 			Name:    vo.CmdCreateUser,
@@ -43,6 +43,13 @@ func AllProcessors() []*server.Route {
 			Path:    vo.PathCreateUser,
 			Handler: CreateUserProcessor,
 			Req:     vo.CreateUserRequest{},
+		},
+		{
+			Name:   vo.CmdGetUser,
+			Method: http.MethodPost,
+			Path:   vo.PathGetUser,
+			Handler: GetUserProcessor,
+			Req:    vo.GetUserRequest{},
 		},
 		{
 			Name:    vo.CmdUpdateProfileImg,
