@@ -25,6 +25,7 @@ func AllMiddlewares() []server.Middleware {
 		vo.CmdGetImages,
 		vo.CmdSeedData,
 		vo.CmdGetUser,
+		vo.CmdGetUserLikes,
 	)
 
 	middlewares := []server.Middleware{

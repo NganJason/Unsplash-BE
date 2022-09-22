@@ -86,6 +86,13 @@ func AllProcessors() []*server.Route {
 			Handler: SeedDataProcessor,
 			Req:     nil,
 		},
+		{
+			Name: vo.CmdGetUserLikes,
+			Method: http.MethodPost,
+			Path: vo.PathGetUserLikes,
+			Handler: GetUserLikesProcessor,
+			Req: vo.GetUserLikesRequest{},
+		},
 	}
 
 	return processors

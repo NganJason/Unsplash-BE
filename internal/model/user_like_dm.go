@@ -9,6 +9,7 @@ import (
 
 	"github.com/NganJason/Unsplash-BE/internal/config"
 	"github.com/NganJason/Unsplash-BE/internal/model/query"
+	"github.com/NganJason/Unsplash-BE/internal/util"
 	"github.com/NganJason/Unsplash-BE/pkg/cerr"
 )
 
@@ -24,7 +25,12 @@ func NewUserLikeDM(ctx context.Context) UserLikeDM {
 	}
 }
 
-func (dm *userLikeDM) GetUserLikes(userID *uint64, imageID *uint64) ([]*UserLike, error) {
+func (dm *userLikeDM) GetUserLikes(
+	userID *uint64, 
+	imageID *uint64,
+	cursor *uint64, 
+	pageSize *uint32,
+) ([]*UserLike, error) {
 	q := query.NewUserLikeQuery()
 
 	if userID != nil {
@@ -34,6 +40,10 @@ func (dm *userLikeDM) GetUserLikes(userID *uint64, imageID *uint64) ([]*UserLike
 	if imageID != nil {
 		q.ImageID(*imageID)
 	}
+
+	q.Cursor(cursor).
+	PageSize(pageSize).
+	OrderBy(util.StrPtr("created_at DESC"))
 
 	baseQuery := fmt.Sprintf(
 		`SELECT * FROM %s WHERE `,

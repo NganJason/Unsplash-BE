@@ -13,14 +13,14 @@ import (
 	"github.com/NganJason/Unsplash-BE/pkg/server"
 )
 
-func GetImagesProcessor(
+func GetUserLikesProcessor(
 	ctx context.Context,
 	writer http.ResponseWriter,
 	req *http.Request,
 ) *server.HandlerResp {
-	response := &vo.GetImagesResponse{}
+	response := &vo.GetUserLikesResponse{}
 
-	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.GetImagesRequest)
+	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.GetUserLikesRequest)
 	if !ok {
 		return server.NewHandlerResp(
 			response,
@@ -28,22 +28,24 @@ func GetImagesProcessor(
 		)
 	}
 
-	p := &getImagesProcessor{
-		ctx:  ctx,
-		req:  request,
-		resp: response,
+	p := &getUserLikesProcessor{
+		ctx:    ctx,
+		writer: writer,
+		req:    request,
+		resp:   response,
 	}
 
 	return p.process()
 }
 
-type getImagesProcessor struct {
-	ctx  context.Context
-	req  *vo.GetImagesRequest
-	resp *vo.GetImagesResponse
+type getUserLikesProcessor struct {
+	ctx    context.Context
+	writer http.ResponseWriter
+	req    *vo.GetUserLikesRequest
+	resp   *vo.GetUserLikesResponse
 }
 
-func (p *getImagesProcessor) process() *server.HandlerResp {
+func (p *getUserLikesProcessor) process() *server.HandlerResp {
 	if err := p.validateReq(); err != nil {
 		return server.NewHandlerResp(
 			p.resp,
@@ -54,16 +56,16 @@ func (p *getImagesProcessor) process() *server.HandlerResp {
 		)
 	}
 
-	imageDM := model.NewImageDM(p.ctx)
 	userDM := model.NewUserDM(p.ctx)
+	imageDM := model.NewImageDM(p.ctx)
+	userLikeDM := model.NewUserLikeDM(p.ctx)
 
-	h := handler.NewImageHandler(
-		p.ctx,
-		imageDM,
-	)
+	h := handler.NewImageHandler(p.ctx, imageDM)
 	h.SetUserDM(userDM)
+	h.SetUserLikeDM(userLikeDM)
+	
 
-	images, nextCursor, err := h.GetImages(
+	images, nextCursor, err := h.GetImagesLikedByUser(
 		p.req.UserID,
 		p.req.PageSize,
 		p.req.Cursor,
@@ -84,9 +86,14 @@ func (p *getImagesProcessor) process() *server.HandlerResp {
 	)
 }
 
-func (p *getImagesProcessor) validateReq() error {
-	if p.req.PageSize == nil || *p.req.PageSize == 0 {
-		return fmt.Errorf("page size cannot be empty")
+func (p *getUserLikesProcessor) validateReq() error {
+	if p.req.UserID == nil || *p.req.UserID == 0 {
+		return fmt.Errorf("userID cannot be empty")
 	}
+
+	if p.req.PageSize == nil || *p.req.PageSize == 0 {
+		return fmt.Errorf("pageSize cannot be empty")
+	}
+
 	return nil
 }

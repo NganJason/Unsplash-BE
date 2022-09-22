@@ -13,6 +13,7 @@ const (
 	CmdLogout           = "CmdLogout"
 	CmdSeedData         = "CmdSeedData"
 	CmdUpdateProfileImg = "CmdUpdateProfileImg"
+	CmdGetUserLikes		= "CmdGetUserLikes"
 )
 
 const (
@@ -27,6 +28,7 @@ const (
 	PathAddDeltaImage    = "/api/image/add_delta"
 	PathSeedData         = "/api/data/seed"
 	PathUpdateProfileImg = "/api/user/profile"
+	PathGetUserLikes     = "/api/user/likes"
 )
 
 type CommonResponse struct {
@@ -82,6 +84,7 @@ type GetUserResponse struct {
 }
 
 type GetImagesRequest struct {
+	UserID *uint64 `json:"user_id"`
 	PageSize *uint32 `json:"page_size"`
 	Cursor   *string `json:"cursor"`
 }
@@ -153,4 +156,16 @@ type SeedDataRequest struct {
 type SeedDataResponse struct {
 	CommonResponse
 	Image *Image `json:"image"`
+}
+
+type GetUserLikesRequest struct {
+	UserID *uint64 `json:"user_id"`
+	PageSize *uint32 `json:"page_size"`
+	Cursor   *string `json:"cursor"`
+}
+
+type GetUserLikesResponse struct {
+	CommonResponse
+	Images []*Image `json:"images"`
+	NextCursor *string  `json:"next_cursor"`
 }

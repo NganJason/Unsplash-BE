@@ -26,6 +26,10 @@ func NewUserDM(ctx context.Context) UserDM {
 }
 
 func (dm *userDM) GetUserByIDs(userIDs []uint64) ([]*User, error) {
+	if len(userIDs) == 0 {
+		return []*User{}, nil
+	}
+	
 	var users []*User
 
 	q := query.NewUserQuery()

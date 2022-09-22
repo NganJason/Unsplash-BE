@@ -164,10 +164,38 @@ func (h *userHandler) UpdateProfileImg(userID uint64, fileBytes []byte) (*vo.Use
 	return toVoUser(user), nil
 }
 
+func (h *userHandler) GetUserLikes(userID uint64) ([]*vo.Image, error) {
+	userLikes, err := h.userLikeDM.GetUserLikes(&userID, nil, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	
+	imageIDs := make([]uint64, 0)
+	for _, userLike := range userLikes {
+		imageIDs = append(imageIDs, *userLike.ImageID)
+	}
+
+	images, err := h.imageDM.GetImagesByIDs(imageIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	userIDs := h.extractUserIDs(images)
+	users, err := h.userDM.GetUserByIDs(userIDs)
+	if err != nil {
+		return nil, err
+	}
+	userIDMap := h.getUserIDMap(users)
+
+	return toVoImages(images, userIDMap), nil
+}
+
 func (h *userHandler) likeImage(userID, imageID uint64) error {
 	userLikes, err := h.userLikeDM.GetUserLikes(
 		&userID,
 		&imageID,
+		nil,
+		nil,
 	)
 	if err != nil {
 		return err
@@ -212,3 +240,29 @@ func (h *userHandler) downloadImage(userID, imageID uint64) error {
 
 	return nil
 }
+
+func (h *userHandler) getUserIDMap(users []*model.User) map[uint64]*model.User {
+	userIDMap := make(map[uint64]*model.User)
+
+	for _, user := range users {
+		userIDMap[*user.ID] = user
+	}
+
+	return userIDMap
+}
+
+func (h *userHandler) extractUserIDs(images []*model.Image) []uint64 {
+	userIDs := make([]uint64, 0)
+	userIDMap := make(map[uint64]bool)
+
+	for _, img := range images {
+		userIDMap[*img.UserID] = true
+	}
+
+	for userID := range userIDMap {
+		userIDs = append(userIDs, userID)
+	}
+
+	return userIDs
+}
+

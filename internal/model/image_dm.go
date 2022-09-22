@@ -25,10 +25,18 @@ func NewImageDM(ctx context.Context) ImageDM {
 	}
 }
 
-func (dm *imageDM) GetImages(cursor *uint64, pageSize uint32) ([]*Image, error) {
+func (dm *imageDM) GetImages(
+	userID *uint64,
+	cursor *uint64, 
+	pageSize uint32,
+) ([]*Image, error) {
 	q := query.NewImageQuery()
 	q.Cursor(cursor).PageSize(util.Uint32Ptr(pageSize))
 	q.OrderBy(util.StrPtr("created_at DESC"))
+
+	if userID != nil {
+		q = q.UserID(*userID)
+	}
 
 	wheres, args := q.Build()
 	baseQuery := fmt.Sprintf(
@@ -53,6 +61,65 @@ func (dm *imageDM) GetImages(cursor *uint64, pageSize uint32) ([]*Image, error) 
 
 	var images []*Image
 
+	for rows.Next() {
+		var image Image
+
+		if err := rows.Scan(
+			&image.ID,
+			&image.UserID,
+			&image.Url,
+			&image.Desc,
+			&image.Likes,
+			&image.Downloads,
+			&image.CreatedAt,
+			&image.UpdatedAt,
+		); err != nil {
+			if err == sql.ErrNoRows {
+				return images, nil
+			}
+
+			return nil, cerr.New(
+				fmt.Sprintf("query images from db err=%s", err.Error()),
+				http.StatusBadGateway,
+			)
+		}
+
+		images = append(images, &image)
+	}
+
+	return images, nil
+}
+
+func (dm *imageDM) GetImagesByIDs(imageIDs []uint64) ([]*Image, error) {
+	if len(imageIDs) == 0 {
+		return []*Image{}, nil
+	}
+
+	q := query.NewImageQuery()
+	q.IDs(imageIDs)
+
+	wheres, args := q.Build()
+	baseQuery := fmt.Sprintf(
+		`SELECT * from %s WHERE `,
+		dm.getTableName(),
+	)
+
+	rows, err := dm.db.Query(
+		baseQuery+wheres,
+		args...,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, cerr.New(
+			fmt.Sprintf("query images err=%s", err.Error()),
+			http.StatusBadGateway,
+		)
+	}
+
+	var images []*Image
 	for rows.Next() {
 		var image Image
 
