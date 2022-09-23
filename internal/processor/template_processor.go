@@ -15,7 +15,7 @@ func TemplateProcessor(
 	writer http.ResponseWriter,
 	req *http.Request,
 ) *server.HandlerResp {
-	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.GetUserRequest)
+	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.VerifyUserRequest)
 	if !ok {
 		return server.NewHandlerResp(
 			nil,
@@ -23,7 +23,7 @@ func TemplateProcessor(
 		)
 	}
 
-	response := &vo.GetUserResponse{}
+	response := &vo.VerifyUserResponse{}
 
 	p := &templateProcessor{
 		ctx:  ctx,
@@ -36,8 +36,8 @@ func TemplateProcessor(
 
 type templateProcessor struct {
 	ctx  context.Context
-	req  *vo.GetUserRequest
-	resp *vo.GetUserResponse
+	req  *vo.VerifyUserRequest
+	resp *vo.VerifyUserResponse
 }
 
 func (p *templateProcessor) process() *server.HandlerResp {

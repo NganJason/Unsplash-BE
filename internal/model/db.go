@@ -8,6 +8,7 @@ type User struct {
 	Salt           *string `json:"salt"`
 	LastName       *string `json:"last_name"`
 	FirstName      *string `json:"first_name"`
+	ProfileUrl     *string `json:"profile_url"`
 	CreatedAt      *uint64 `json:"created_at"`
 	UpdatedAt      *uint64 `json:"updated_at"`
 }

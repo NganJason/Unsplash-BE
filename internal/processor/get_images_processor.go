@@ -64,6 +64,7 @@ func (p *getImagesProcessor) process() *server.HandlerResp {
 	h.SetUserDM(userDM)
 
 	images, nextCursor, err := h.GetImages(
+		p.req.UserID,
 		p.req.PageSize,
 		p.req.Cursor,
 	)

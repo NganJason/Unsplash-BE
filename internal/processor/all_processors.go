@@ -31,11 +31,11 @@ func AllProcessors() []*server.Route {
 			Req:     nil,
 		},
 		{
-			Name:    vo.CmdGetUser,
+			Name:    vo.CmdVerifyUser,
 			Method:  http.MethodPost,
-			Path:    vo.PathGetUser,
-			Handler: GetUserProcessor,
-			Req:     vo.GetUserRequest{},
+			Path:    vo.PathVerifyUser,
+			Handler: VerifyUserProcessor,
+			Req:     vo.VerifyUserRequest{},
 		},
 		{
 			Name:    vo.CmdCreateUser,
@@ -43,6 +43,20 @@ func AllProcessors() []*server.Route {
 			Path:    vo.PathCreateUser,
 			Handler: CreateUserProcessor,
 			Req:     vo.CreateUserRequest{},
+		},
+		{
+			Name:   vo.CmdGetUser,
+			Method: http.MethodPost,
+			Path:   vo.PathGetUser,
+			Handler: GetUserProcessor,
+			Req:    vo.GetUserRequest{},
+		},
+		{
+			Name:    vo.CmdUpdateProfileImg,
+			Method:  http.MethodPost,
+			Path:    vo.PathUpdateProfileImg,
+			Handler: UpdateProfileImgProcessor,
+			Req:     nil,
 		},
 		{
 			Name:    vo.CmdGetImages,
@@ -64,6 +78,20 @@ func AllProcessors() []*server.Route {
 			Path:    vo.PathAddDeltaImage,
 			Handler: AddDeltaImageProcessor,
 			Req:     vo.AddDeltaImageRequest{},
+		},
+		{
+			Name:    vo.CmdSeedData,
+			Method:  http.MethodPost,
+			Path:    vo.PathSeedData,
+			Handler: SeedDataProcessor,
+			Req:     nil,
+		},
+		{
+			Name: vo.CmdGetUserLikes,
+			Method: http.MethodPost,
+			Path: vo.PathGetUserLikes,
+			Handler: GetUserLikesProcessor,
+			Req: vo.GetUserLikesRequest{},
 		},
 	}
 

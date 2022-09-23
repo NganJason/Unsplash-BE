@@ -19,6 +19,7 @@ type imageHandler struct {
 	ctx          context.Context
 	imageDM      model.ImageDM
 	userDM       model.UserDM
+	userLikeDM model.UserLikeDM
 	imageService service.ImageService
 }
 
@@ -38,6 +39,12 @@ func (h *imageHandler) SetUserDM(
 	h.userDM = userDM
 }
 
+func (h *imageHandler) SetUserLikeDM(
+	userLikeDM model.UserLikeDM,
+) {
+	h.userLikeDM = userLikeDM
+}
+
 func (h *imageHandler) SetImageService(
 	imageService service.ImageService,
 ) {
@@ -45,6 +52,7 @@ func (h *imageHandler) SetImageService(
 }
 
 func (h *imageHandler) GetImages(
+	userID *uint64,
 	pageSize *uint32,
 	cursor *string,
 ) ([]*vo.Image, *string, error) {
@@ -56,6 +64,7 @@ func (h *imageHandler) GetImages(
 	}
 
 	images, err := h.imageDM.GetImages(
+		userID,
 		util.Uint64Ptr(cursorTimestamp),
 		counter,
 	)
@@ -67,6 +76,54 @@ func (h *imageHandler) GetImages(
 
 	if len(images) == int(counter) {
 		images = images[:len(images)-1]
+	}
+
+	userIDs := h.extractUserIDs(images)
+	users, err := h.userDM.GetUserByIDs(userIDs)
+	if err != nil {
+		return nil, nil, err
+	}
+	userIDMap := h.getUserIDMap(users)
+
+	return toVoImages(images, userIDMap), nextCursor, nil
+}
+
+func (h *imageHandler) GetImagesLikedByUser(
+	userID *uint64,
+	pageSize *uint32,
+	cursor *string,
+) ([]*vo.Image, *string, error) {
+	counter := *pageSize + 1
+
+	cursorTimestamp, err := h.getCursorTimestamp(cursor)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	userLikes, err := h.userLikeDM.GetUserLikes(
+		userID,
+		nil,
+		&cursorTimestamp,
+		&counter,
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	nextCursor := h.getUserLikesNextCursor(userLikes, counter)
+
+	if len(userLikes) == int(counter) {
+		userLikes = userLikes[:len(userLikes)-1]
+	}
+
+	imageIDs := make([]uint64, 0)
+	for _, userLike := range userLikes {
+		imageIDs = append(imageIDs, *userLike.ImageID)
+	}
+
+	images, err := h.imageDM.GetImagesByIDs(imageIDs)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	userIDs := h.extractUserIDs(images)
@@ -134,6 +191,21 @@ func (h *imageHandler) getNextCursor(images []*model.Image, counter uint32) *str
 		binary.LittleEndian.PutUint64(cursorByte, *nextCursorTimestamp)
 
 		nextCursor = util.StrPtr(b64.StdEncoding.EncodeToString(cursorByte))
+	}
+
+	return nextCursor
+}
+
+func (h *imageHandler) getUserLikesNextCursor(userLikes []*model.UserLike, counter uint32) *string {
+	var nextCursor *string
+
+	if len(userLikes) == int(counter) {
+		nextCursorTimestamp := userLikes[len(userLikes)-1].CreatedAt
+		cursorByte := make([]byte, 8)
+		binary.LittleEndian.PutUint64(cursorByte, *nextCursorTimestamp)
+
+		nextCursor = util.StrPtr(b64.StdEncoding.EncodeToString(cursorByte))
+		fmt.Println(nextCursor)
 	}
 
 	return nextCursor

@@ -13,14 +13,14 @@ import (
 	"github.com/NganJason/Unsplash-BE/pkg/server"
 )
 
-func GetUserProcessor(
+func GetUserLikesProcessor(
 	ctx context.Context,
 	writer http.ResponseWriter,
 	req *http.Request,
 ) *server.HandlerResp {
-	response := &vo.GetUserResponse{}
+	response := &vo.GetUserLikesResponse{}
 
-	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.GetUserRequest)
+	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.GetUserLikesRequest)
 	if !ok {
 		return server.NewHandlerResp(
 			response,
@@ -28,7 +28,7 @@ func GetUserProcessor(
 		)
 	}
 
-	p := &getUserProcessor{
+	p := &getUserLikesProcessor{
 		ctx:    ctx,
 		writer: writer,
 		req:    request,
@@ -38,14 +38,14 @@ func GetUserProcessor(
 	return p.process()
 }
 
-type getUserProcessor struct {
+type getUserLikesProcessor struct {
 	ctx    context.Context
 	writer http.ResponseWriter
-	req    *vo.GetUserRequest
-	resp   *vo.GetUserResponse
+	req    *vo.GetUserLikesRequest
+	resp   *vo.GetUserLikesResponse
 }
 
-func (p *getUserProcessor) process() *server.HandlerResp {
+func (p *getUserLikesProcessor) process() *server.HandlerResp {
 	if err := p.validateReq(); err != nil {
 		return server.NewHandlerResp(
 			p.resp,
@@ -57,12 +57,18 @@ func (p *getUserProcessor) process() *server.HandlerResp {
 	}
 
 	userDM := model.NewUserDM(p.ctx)
-	h := handler.NewUserHandler(p.ctx, userDM)
+	imageDM := model.NewImageDM(p.ctx)
+	userLikeDM := model.NewUserLikeDM(p.ctx)
 
-	user, err := h.GetUser(
+	h := handler.NewImageHandler(p.ctx, imageDM)
+	h.SetUserDM(userDM)
+	h.SetUserLikeDM(userLikeDM)
+	
+
+	images, nextCursor, err := h.GetImagesLikedByUser(
 		p.req.UserID,
-		nil,
-		nil,
+		p.req.PageSize,
+		p.req.Cursor,
 	)
 	if err != nil {
 		return server.NewHandlerResp(
@@ -71,7 +77,8 @@ func (p *getUserProcessor) process() *server.HandlerResp {
 		)
 	}
 
-	p.resp.User = user
+	p.resp.Images = images
+	p.resp.NextCursor = nextCursor
 
 	return server.NewHandlerResp(
 		p.resp,
@@ -79,9 +86,13 @@ func (p *getUserProcessor) process() *server.HandlerResp {
 	)
 }
 
-func (p *getUserProcessor) validateReq() error {
+func (p *getUserLikesProcessor) validateReq() error {
 	if p.req.UserID == nil || *p.req.UserID == 0 {
 		return fmt.Errorf("userID cannot be empty")
+	}
+
+	if p.req.PageSize == nil || *p.req.PageSize == 0 {
+		return fmt.Errorf("pageSize cannot be empty")
 	}
 
 	return nil

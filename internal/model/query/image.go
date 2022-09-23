@@ -4,6 +4,7 @@ import "strings"
 
 type ImageQuery struct {
 	ids      []uint64
+	userIDs []uint64
 	cursor   *uint64
 	pageSize *uint32
 	orderBy  *string
@@ -17,6 +18,30 @@ func (q *ImageQuery) ID(
 	ID uint64,
 ) *ImageQuery {
 	q.ids = append(q.ids, ID)
+
+	return q
+}
+
+func (q *ImageQuery) IDs(
+	IDs []uint64,
+) *ImageQuery {
+	q.ids = append(q.ids, IDs...)
+
+	return q
+}
+
+func (q *ImageQuery) UserID(
+	userID uint64,
+) *ImageQuery {
+	q.userIDs = append(q.userIDs, userID)
+
+	return q
+}
+
+func (q *ImageQuery) UserIDs(
+	userIDs []uint64,
+) *ImageQuery {
+	q.userIDs = append(q.userIDs, userIDs...)
 
 	return q
 }
@@ -58,6 +83,20 @@ func (q *ImageQuery) Build() (wheres string, args []interface{}) {
 		whereCols = append(whereCols, inCondition)
 
 		for _, id := range q.ids {
+			args = append(args, id)
+		}
+	}
+
+	if len(q.userIDs) != 0 {
+		inCondition := "user_id IN (?"
+
+		for i := 1; i < len(q.userIDs); i++ {
+			inCondition = inCondition + ",?"
+		}
+		inCondition = inCondition + ")"
+		whereCols = append(whereCols, inCondition)
+
+		for _, id := range q.userIDs {
 			args = append(args, id)
 		}
 	}
