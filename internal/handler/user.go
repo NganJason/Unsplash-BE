@@ -169,7 +169,7 @@ func (h *userHandler) GetUserLikes(userID uint64) ([]*vo.Image, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	imageIDs := make([]uint64, 0)
 	for _, userLike := range userLikes {
 		imageIDs = append(imageIDs, *userLike.ImageID)
@@ -188,6 +188,15 @@ func (h *userHandler) GetUserLikes(userID uint64) ([]*vo.Image, error) {
 	userIDMap := h.getUserIDMap(users)
 
 	return toVoImages(images, userIDMap), nil
+}
+
+func (h *userHandler) SearchUsers(keyword string) ([]*vo.User, error) {
+	users, err := h.userDM.SearchUsers(keyword)
+	if err != nil {
+		return nil, err
+	}
+
+	return toVoUsers(users), nil
 }
 
 func (h *userHandler) likeImage(userID, imageID uint64) error {
@@ -265,4 +274,3 @@ func (h *userHandler) extractUserIDs(images []*model.Image) []uint64 {
 
 	return userIDs
 }
-

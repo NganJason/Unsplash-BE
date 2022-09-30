@@ -29,7 +29,7 @@ func (dm *userDM) GetUserByIDs(userIDs []uint64) ([]*User, error) {
 	if len(userIDs) == 0 {
 		return []*User{}, nil
 	}
-	
+
 	var users []*User
 
 	q := query.NewUserQuery()
@@ -312,6 +312,62 @@ func (dm *userDM) UpdateUser(req *UpdateUserReq) (*User, error) {
 	}
 
 	return &existingUser, nil
+}
+
+func (dm *userDM) SearchUsers(
+	keyword string,
+) (
+	users []*User,
+	err error,
+) {
+	baseQuery := fmt.Sprintf(
+		`SELECT * from %s WHERE `,
+		dm.getTableName(),
+	)
+
+	q := query.NewUserQuery().Keyword(&keyword)
+	wheres, args := q.Build()
+
+	rows, err := dm.db.Query(
+		baseQuery+wheres,
+		args...,
+	)
+	if err != nil {
+		return nil, cerr.New(
+			fmt.Sprintf("query users from db err=%s", err.Error()),
+			http.StatusBadGateway,
+		)
+	}
+
+	for rows.Next() {
+		var user User
+
+		if err := rows.Scan(
+			&user.ID,
+			&user.Username,
+			&user.EmailAddress,
+			&user.HashedPassword,
+			&user.Salt,
+			&user.LastName,
+			&user.FirstName,
+			&user.ProfileUrl,
+			&user.CreatedAt,
+			&user.UpdatedAt,
+		); err != nil {
+			if err == sql.ErrNoRows {
+				return users, nil
+			}
+
+			return nil, cerr.New(
+				fmt.Sprintf("query users from db err=%s", err.Error()),
+				http.StatusBadGateway,
+			)
+		}
+
+		users = append(users, &user)
+	}
+
+	return users, nil
 }
 
 func (dm *userDM) getTableName() string {

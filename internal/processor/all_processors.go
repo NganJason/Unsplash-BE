@@ -45,11 +45,11 @@ func AllProcessors() []*server.Route {
 			Req:     vo.CreateUserRequest{},
 		},
 		{
-			Name:   vo.CmdGetUser,
-			Method: http.MethodPost,
-			Path:   vo.PathGetUser,
+			Name:    vo.CmdGetUser,
+			Method:  http.MethodPost,
+			Path:    vo.PathGetUser,
 			Handler: GetUserProcessor,
-			Req:    vo.GetUserRequest{},
+			Req:     vo.GetUserRequest{},
 		},
 		{
 			Name:    vo.CmdUpdateProfileImg,
@@ -87,11 +87,18 @@ func AllProcessors() []*server.Route {
 			Req:     nil,
 		},
 		{
-			Name: vo.CmdGetUserLikes,
-			Method: http.MethodPost,
-			Path: vo.PathGetUserLikes,
+			Name:    vo.CmdGetUserLikes,
+			Method:  http.MethodPost,
+			Path:    vo.PathGetUserLikes,
 			Handler: GetUserLikesProcessor,
-			Req: vo.GetUserLikesRequest{},
+			Req:     vo.GetUserLikesRequest{},
+		},
+		{
+			Name:    vo.CmdSearchUsers,
+			Method:  http.MethodPost,
+			Path:    vo.PathSearchUsers,
+			Handler: SearchUsersProcessor,
+			Req:     vo.SearchUsersRequest{},
 		},
 	}
 

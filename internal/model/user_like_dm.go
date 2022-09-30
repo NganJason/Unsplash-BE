@@ -26,9 +26,9 @@ func NewUserLikeDM(ctx context.Context) UserLikeDM {
 }
 
 func (dm *userLikeDM) GetUserLikes(
-	userID *uint64, 
+	userID *uint64,
 	imageID *uint64,
-	cursor *uint64, 
+	cursor *uint64,
 	pageSize *uint32,
 ) ([]*UserLike, error) {
 	q := query.NewUserLikeQuery()
@@ -42,8 +42,8 @@ func (dm *userLikeDM) GetUserLikes(
 	}
 
 	q.Cursor(cursor).
-	PageSize(pageSize).
-	OrderBy(util.StrPtr("created_at DESC"))
+		PageSize(pageSize).
+		OrderBy(util.StrPtr("created_at DESC"))
 
 	baseQuery := fmt.Sprintf(
 		`SELECT * FROM %s WHERE `,

@@ -1,12 +1,14 @@
 package query
 
 import (
+	"fmt"
 	"strings"
 )
 
 type UserQuery struct {
-	ids    []uint64
-	emails []string
+	ids     []uint64
+	emails  []string
+	keyword *string
 }
 
 func NewUserQuery() *UserQuery {
@@ -45,6 +47,14 @@ func (q *UserQuery) Emails(
 	return q
 }
 
+func (q *UserQuery) Keyword(
+	keyword *string,
+) *UserQuery {
+	q.keyword = keyword
+
+	return q
+}
+
 func (q *UserQuery) Build() (wheres string, args []interface{}) {
 	whereCols := make([]string, 0)
 
@@ -74,6 +84,12 @@ func (q *UserQuery) Build() (wheres string, args []interface{}) {
 		for _, userName := range q.emails {
 			args = append(args, userName)
 		}
+	}
+
+	if q.keyword != nil {
+		whereCols = append(whereCols,
+			fmt.Sprintf("username LIKE '%s%%'", *q.keyword),
+		)
 	}
 
 	wheres = strings.Join(whereCols, " AND ")

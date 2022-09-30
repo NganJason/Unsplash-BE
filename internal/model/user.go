@@ -6,6 +6,7 @@ type UserDM interface {
 
 	CreateUser(req *CreateUserReq) (*User, error)
 	UpdateUser(req *UpdateUserReq) (*User, error)
+	SearchUsers(keyword string) ([]*User, error)
 }
 
 type CreateUserReq struct {

@@ -63,7 +63,6 @@ func (p *getUserLikesProcessor) process() *server.HandlerResp {
 	h := handler.NewImageHandler(p.ctx, imageDM)
 	h.SetUserDM(userDM)
 	h.SetUserLikeDM(userLikeDM)
-	
 
 	images, nextCursor, err := h.GetImagesLikedByUser(
 		p.req.UserID,
