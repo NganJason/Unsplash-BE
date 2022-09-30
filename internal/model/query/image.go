@@ -4,7 +4,7 @@ import "strings"
 
 type ImageQuery struct {
 	ids      []uint64
-	userIDs []uint64
+	userIDs  []uint64
 	cursor   *uint64
 	pageSize *uint32
 	orderBy  *string

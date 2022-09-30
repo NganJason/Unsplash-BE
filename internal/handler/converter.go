@@ -16,6 +16,16 @@ func toVoUser(dbUser *model.User) *vo.User {
 	}
 }
 
+func toVoUsers(dbUsers []*model.User) []*vo.User {
+	voUsers := make([]*vo.User, 0)
+
+	for _, user := range dbUsers {
+		voUsers = append(voUsers, toVoUser(user))
+	}
+
+	return voUsers
+}
+
 func toVoImages(dbImages []*model.Image, userIDMap map[uint64]*model.User) []*vo.Image {
 	voImages := make([]*vo.Image, 0)
 

@@ -71,9 +71,7 @@ func (p *createUserProcessor) process() *server.HandlerResp {
 		)
 	}
 
-	cookie, err := util.GenerateCookies(
-		strconv.FormatUint(*user.ID, 10),
-	)
+	token, err := util.GenerateJWTToken(strconv.FormatUint(*user.ID, 10))
 	if err != nil {
 		return server.NewHandlerResp(
 			p.resp,
@@ -84,8 +82,7 @@ func (p *createUserProcessor) process() *server.HandlerResp {
 		)
 	}
 
-	http.SetCookie(p.writer, cookie)
-
+	user.Token = util.StrPtr(token)
 	p.resp.User = user
 
 	return server.NewHandlerResp(

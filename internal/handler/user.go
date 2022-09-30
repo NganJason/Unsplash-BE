@@ -45,11 +45,12 @@ func (h *userHandler) SetImageService(imageService service.ImageService) {
 
 func (h *userHandler) GetUser(
 	userID *uint64,
+	username *string,
 	emailAddress *string,
 	password *string,
 ) (*vo.User, error) {
-	if userID != nil {
-		users, err := h.userDM.GetUserByIDs([]uint64{*userID})
+	if userID != nil || username != nil {
+		user, err := h.userDM.GetUser(userID, username)
 		if err != nil {
 			return nil, cerr.New(
 				fmt.Sprintf("get user by ID err=%s", err.Error()),
@@ -57,14 +58,14 @@ func (h *userHandler) GetUser(
 			)
 		}
 
-		if len(users) == 0 {
+		if user == nil {
 			return nil, cerr.New(
-				fmt.Sprintf("cannot find user with userID=%d", *userID),
+				"user not found",
 				http.StatusBadRequest,
 			)
 		}
 
-		return toVoUser(users[0]), nil
+		return toVoUser(user), nil
 	}
 
 	if emailAddress == nil || password == nil {
@@ -169,7 +170,7 @@ func (h *userHandler) GetUserLikes(userID uint64) ([]*vo.Image, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	imageIDs := make([]uint64, 0)
 	for _, userLike := range userLikes {
 		imageIDs = append(imageIDs, *userLike.ImageID)
@@ -188,6 +189,15 @@ func (h *userHandler) GetUserLikes(userID uint64) ([]*vo.Image, error) {
 	userIDMap := h.getUserIDMap(users)
 
 	return toVoImages(images, userIDMap), nil
+}
+
+func (h *userHandler) SearchUsers(keyword string) ([]*vo.User, error) {
+	users, err := h.userDM.SearchUsers(keyword)
+	if err != nil {
+		return nil, err
+	}
+
+	return toVoUsers(users), nil
 }
 
 func (h *userHandler) likeImage(userID, imageID uint64) error {
@@ -265,4 +275,3 @@ func (h *userHandler) extractUserIDs(images []*model.Image) []uint64 {
 
 	return userIDs
 }
-

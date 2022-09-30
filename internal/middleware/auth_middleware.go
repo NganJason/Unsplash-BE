@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/NganJason/Unsplash-BE/internal/handler"
 	"github.com/NganJason/Unsplash-BE/internal/model"
@@ -22,19 +23,23 @@ type AuthMiddleware struct {
 
 func (*AuthMiddleware) PreRequest(nextHandler server.Handler) server.Handler {
 	return func(ctx context.Context, writer http.ResponseWriter, req *http.Request) *server.HandlerResp {
-		c := cookies.ExtractCookie(req)
-		if c == nil {
+		reqToken := req.Header.Get("Authorization")
+		splitToken := strings.Split(reqToken, "Bearer ")
+
+		var token string
+		if len(splitToken) > 1 {
+			token = splitToken[1]
+		} else {
 			return server.NewHandlerResp(
 				&vo.CommonResponse{},
 				cerr.New(
-					"cookies not found, unauthorized",
+					"token not found, unauthorized",
 					http.StatusUnauthorized,
 				),
 			)
 		}
 
-		jwt := c.Value
-		auth, err := util.ParseJWTToken(jwt)
+		auth, err := util.ParseJWTToken(token)
 		if err != nil || auth == nil {
 			return server.NewHandlerResp(
 				&vo.CommonResponse{},
@@ -70,7 +75,7 @@ func (*AuthMiddleware) PreRequest(nextHandler server.Handler) server.Handler {
 		userDM := model.NewUserDM(req.Context())
 		h := handler.NewUserHandler(req.Context(), userDM)
 
-		user, err := h.GetUser(util.Uint64Ptr(userID), nil, nil)
+		user, err := h.GetUser(util.Uint64Ptr(userID), nil, nil, nil)
 		if err != nil {
 			return server.NewHandlerResp(
 				&vo.CommonResponse{},

@@ -13,14 +13,14 @@ import (
 	"github.com/NganJason/Unsplash-BE/pkg/server"
 )
 
-func GetUserProcessor(
+func SearchUsersProcessor(
 	ctx context.Context,
 	writer http.ResponseWriter,
 	req *http.Request,
 ) *server.HandlerResp {
-	response := &vo.GetUserResponse{}
+	response := &vo.SearchUsersResponse{}
 
-	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.GetUserRequest)
+	request, ok := ctx.Value(internal.CtxRequestBody).(*vo.SearchUsersRequest)
 	if !ok {
 		return server.NewHandlerResp(
 			response,
@@ -28,24 +28,22 @@ func GetUserProcessor(
 		)
 	}
 
-	p := &getUserProcessor{
-		ctx:    ctx,
-		writer: writer,
-		req:    request,
-		resp:   response,
+	p := &searchUsersProcessor{
+		ctx:  ctx,
+		req:  request,
+		resp: response,
 	}
 
 	return p.process()
 }
 
-type getUserProcessor struct {
-	ctx    context.Context
-	writer http.ResponseWriter
-	req    *vo.GetUserRequest
-	resp   *vo.GetUserResponse
+type searchUsersProcessor struct {
+	ctx  context.Context
+	req  *vo.SearchUsersRequest
+	resp *vo.SearchUsersResponse
 }
 
-func (p *getUserProcessor) process() *server.HandlerResp {
+func (p *searchUsersProcessor) process() *server.HandlerResp {
 	if err := p.validateReq(); err != nil {
 		return server.NewHandlerResp(
 			p.resp,
@@ -59,11 +57,8 @@ func (p *getUserProcessor) process() *server.HandlerResp {
 	userDM := model.NewUserDM(p.ctx)
 	h := handler.NewUserHandler(p.ctx, userDM)
 
-	user, err := h.GetUser(
-		p.req.UserID,
-		p.req.Username,
-		nil,
-		nil,
+	users, err := h.SearchUsers(
+		*p.req.Keyword,
 	)
 	if err != nil {
 		return server.NewHandlerResp(
@@ -72,7 +67,7 @@ func (p *getUserProcessor) process() *server.HandlerResp {
 		)
 	}
 
-	p.resp.User = user
+	p.resp.Users = users
 
 	return server.NewHandlerResp(
 		p.resp,
@@ -80,9 +75,9 @@ func (p *getUserProcessor) process() *server.HandlerResp {
 	)
 }
 
-func (p *getUserProcessor) validateReq() error {
-	if p.req.UserID == nil && p.req.Username == nil {
-		return fmt.Errorf("userID and username cannot both be empty")
+func (p *searchUsersProcessor) validateReq() error {
+	if p.req.Keyword == nil || *p.req.Keyword == "" {
+		return fmt.Errorf("keyword cannot be empty")
 	}
 
 	return nil

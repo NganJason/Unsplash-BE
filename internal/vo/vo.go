@@ -13,7 +13,8 @@ const (
 	CmdLogout           = "CmdLogout"
 	CmdSeedData         = "CmdSeedData"
 	CmdUpdateProfileImg = "CmdUpdateProfileImg"
-	CmdGetUserLikes		= "CmdGetUserLikes"
+	CmdGetUserLikes     = "CmdGetUserLikes"
+	CmdSearchUsers      = "CmdSearchUsers"
 )
 
 const (
@@ -29,6 +30,7 @@ const (
 	PathSeedData         = "/api/data/seed"
 	PathUpdateProfileImg = "/api/user/profile"
 	PathGetUserLikes     = "/api/user/likes"
+	PathSearchUsers      = "/api/user/search"
 )
 
 type CommonResponse struct {
@@ -75,7 +77,8 @@ type CreateUserResponse struct {
 }
 
 type GetUserRequest struct {
-	UserID *uint64 `json:"user_id"`
+	UserID   *uint64 `json:"user_id"`
+	Username *string `json:"username"`
 }
 
 type GetUserResponse struct {
@@ -84,7 +87,7 @@ type GetUserResponse struct {
 }
 
 type GetImagesRequest struct {
-	UserID *uint64 `json:"user_id"`
+	UserID   *uint64 `json:"user_id"`
 	PageSize *uint32 `json:"page_size"`
 	Cursor   *string `json:"cursor"`
 }
@@ -126,6 +129,7 @@ type User struct {
 	FirstName    *string `json:"first_name"`
 	LastName     *string `json:"last_name"`
 	ProfileUrl   *string `json:"profile_url"`
+	Token        *string `json:"token"`
 }
 
 type Image struct {
@@ -159,13 +163,22 @@ type SeedDataResponse struct {
 }
 
 type GetUserLikesRequest struct {
-	UserID *uint64 `json:"user_id"`
+	UserID   *uint64 `json:"user_id"`
 	PageSize *uint32 `json:"page_size"`
 	Cursor   *string `json:"cursor"`
 }
 
 type GetUserLikesResponse struct {
 	CommonResponse
-	Images []*Image `json:"images"`
+	Images     []*Image `json:"images"`
 	NextCursor *string  `json:"next_cursor"`
+}
+
+type SearchUsersRequest struct {
+	Keyword *string `json:"keyword"`
+}
+
+type SearchUsersResponse struct {
+	CommonResponse
+	Users []*User `json:"users"`
 }

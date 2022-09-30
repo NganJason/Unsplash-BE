@@ -19,7 +19,7 @@ type imageHandler struct {
 	ctx          context.Context
 	imageDM      model.ImageDM
 	userDM       model.UserDM
-	userLikeDM model.UserLikeDM
+	userLikeDM   model.UserLikeDM
 	imageService service.ImageService
 }
 

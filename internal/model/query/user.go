@@ -1,12 +1,15 @@
 package query
 
 import (
+	"fmt"
 	"strings"
 )
 
 type UserQuery struct {
-	ids    []uint64
-	emails []string
+	ids       []uint64
+	usernames []string
+	emails    []string
+	keyword   *string
 }
 
 func NewUserQuery() *UserQuery {
@@ -45,6 +48,30 @@ func (q *UserQuery) Emails(
 	return q
 }
 
+func (q *UserQuery) Username(
+	username string,
+) *UserQuery {
+	q.usernames = append(q.usernames, username)
+
+	return q
+}
+
+func (q *UserQuery) Usernames(
+	usernames []string,
+) *UserQuery {
+	q.usernames = append(q.usernames, usernames...)
+
+	return q
+}
+
+func (q *UserQuery) Keyword(
+	keyword *string,
+) *UserQuery {
+	q.keyword = keyword
+
+	return q
+}
+
 func (q *UserQuery) Build() (wheres string, args []interface{}) {
 	whereCols := make([]string, 0)
 
@@ -71,9 +98,29 @@ func (q *UserQuery) Build() (wheres string, args []interface{}) {
 		inCondition = inCondition + ")"
 		whereCols = append(whereCols, inCondition)
 
-		for _, userName := range q.emails {
-			args = append(args, userName)
+		for _, email := range q.emails {
+			args = append(args, email)
 		}
+	}
+
+	if len(q.usernames) != 0 {
+		inCondition := "username in (?"
+
+		for i := 1; i < len(q.usernames); i++ {
+			inCondition = inCondition + ",?"
+		}
+		inCondition = inCondition + ")"
+		whereCols = append(whereCols, inCondition)
+
+		for _, username := range q.usernames {
+			args = append(args, username)
+		}
+	}
+
+	if q.keyword != nil {
+		whereCols = append(whereCols,
+			fmt.Sprintf("username LIKE '%s%%'", *q.keyword),
+		)
 	}
 
 	wheres = strings.Join(whereCols, " AND ")

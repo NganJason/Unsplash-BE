@@ -27,7 +27,7 @@ func NewImageDM(ctx context.Context) ImageDM {
 
 func (dm *imageDM) GetImages(
 	userID *uint64,
-	cursor *uint64, 
+	cursor *uint64,
 	pageSize uint32,
 ) ([]*Image, error) {
 	q := query.NewImageQuery()

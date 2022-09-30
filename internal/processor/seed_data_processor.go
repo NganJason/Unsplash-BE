@@ -127,6 +127,7 @@ func (p *seedDataProcessor) process() *server.HandlerResp {
 
 	user, _ := userHandler.GetUser(
 		nil,
+		nil,
 		p.req.EmailAddress,
 		p.req.Password,
 	)

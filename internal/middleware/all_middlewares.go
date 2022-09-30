@@ -14,7 +14,6 @@ func AllMiddlewares() []server.Middleware {
 	)
 
 	parseFileBodyMiddleware := new(ParseFileBodyMiddleware)
-	
 
 	authMiddleware := new(AuthMiddleware)
 	authMiddleware.Skip(
@@ -26,6 +25,7 @@ func AllMiddlewares() []server.Middleware {
 		vo.CmdSeedData,
 		vo.CmdGetUser,
 		vo.CmdGetUserLikes,
+		vo.CmdSearchUsers,
 	)
 
 	middlewares := []server.Middleware{
