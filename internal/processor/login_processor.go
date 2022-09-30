@@ -53,6 +53,7 @@ func (p *loginProcessor) process() *server.HandlerResp {
 
 	user, err := h.GetUser(
 		nil,
+		nil,
 		p.req.EmailAddress,
 		p.req.Password,
 	)

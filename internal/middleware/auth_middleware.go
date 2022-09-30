@@ -75,7 +75,7 @@ func (*AuthMiddleware) PreRequest(nextHandler server.Handler) server.Handler {
 		userDM := model.NewUserDM(req.Context())
 		h := handler.NewUserHandler(req.Context(), userDM)
 
-		user, err := h.GetUser(util.Uint64Ptr(userID), nil, nil)
+		user, err := h.GetUser(util.Uint64Ptr(userID), nil, nil, nil)
 		if err != nil {
 			return server.NewHandlerResp(
 				&vo.CommonResponse{},

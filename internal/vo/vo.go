@@ -77,7 +77,8 @@ type CreateUserResponse struct {
 }
 
 type GetUserRequest struct {
-	UserID *uint64 `json:"user_id"`
+	UserID   *uint64 `json:"user_id"`
+	Username *string `json:"username"`
 }
 
 type GetUserResponse struct {

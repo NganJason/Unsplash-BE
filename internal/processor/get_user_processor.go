@@ -61,6 +61,7 @@ func (p *getUserProcessor) process() *server.HandlerResp {
 
 	user, err := h.GetUser(
 		p.req.UserID,
+		p.req.Username,
 		nil,
 		nil,
 	)
@@ -80,8 +81,8 @@ func (p *getUserProcessor) process() *server.HandlerResp {
 }
 
 func (p *getUserProcessor) validateReq() error {
-	if p.req.UserID == nil || *p.req.UserID == 0 {
-		return fmt.Errorf("userID cannot be empty")
+	if p.req.UserID == nil && p.req.Username == nil {
+		return fmt.Errorf("userID and username cannot both be empty")
 	}
 
 	return nil

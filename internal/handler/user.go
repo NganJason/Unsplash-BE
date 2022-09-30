@@ -45,11 +45,12 @@ func (h *userHandler) SetImageService(imageService service.ImageService) {
 
 func (h *userHandler) GetUser(
 	userID *uint64,
+	username *string,
 	emailAddress *string,
 	password *string,
 ) (*vo.User, error) {
-	if userID != nil {
-		users, err := h.userDM.GetUserByIDs([]uint64{*userID})
+	if userID != nil || username != nil {
+		user, err := h.userDM.GetUser(userID, username)
 		if err != nil {
 			return nil, cerr.New(
 				fmt.Sprintf("get user by ID err=%s", err.Error()),
@@ -57,14 +58,14 @@ func (h *userHandler) GetUser(
 			)
 		}
 
-		if len(users) == 0 {
+		if user == nil {
 			return nil, cerr.New(
-				fmt.Sprintf("cannot find user with userID=%d", *userID),
+				"user not found",
 				http.StatusBadRequest,
 			)
 		}
 
-		return toVoUser(users[0]), nil
+		return toVoUser(user), nil
 	}
 
 	if emailAddress == nil || password == nil {

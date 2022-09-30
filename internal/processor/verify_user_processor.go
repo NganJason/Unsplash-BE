@@ -69,6 +69,7 @@ func (p *verifyUserProcessor) process() *server.HandlerResp {
 		p.userID,
 		nil,
 		nil,
+		nil,
 	)
 	if err != nil {
 		return server.NewHandlerResp(

@@ -25,6 +25,80 @@ func NewUserDM(ctx context.Context) UserDM {
 	}
 }
 
+func (dm *userDM) GetUser(userID *uint64, username *string) (*User, error) {
+	if userID == nil && username == nil {
+		return nil, cerr.New(
+			"userID and username cannot both be nil",
+			http.StatusBadRequest,
+		)
+	}
+
+	q := query.NewUserQuery()
+	if username != nil {
+		q.Username(*username)
+	}
+
+	if userID != nil {
+		q.ID(*userID)
+	}
+
+	baseQuery := fmt.Sprintf(
+		`SELECT * FROM %s WHERE `,
+		dm.getTableName(),
+	)
+
+	wheres, args := q.Build()
+
+	rows, err := dm.db.Query(
+		baseQuery+wheres,
+		args...,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, cerr.New(
+			fmt.Sprintf("query users err=%s", err.Error()),
+			http.StatusBadGateway,
+		)
+	}
+
+	var users []*User
+	for rows.Next() {
+		var user User
+
+		if err := rows.Scan(
+			&user.ID,
+			&user.Username,
+			&user.EmailAddress,
+			&user.HashedPassword,
+			&user.Salt,
+			&user.LastName,
+			&user.FirstName,
+			&user.ProfileUrl,
+			&user.CreatedAt,
+			&user.UpdatedAt,
+		); err != nil {
+			if err == sql.ErrNoRows {
+				return nil, cerr.New(
+					"user not found",
+					http.StatusBadRequest,
+				)
+			}
+
+			return nil, cerr.New(
+				fmt.Sprintf("query users from db err=%s", err.Error()),
+				http.StatusBadGateway,
+			)
+		}
+
+		users = append(users, &user)
+	}
+
+	return users[0], nil
+}
+
 func (dm *userDM) GetUserByIDs(userIDs []uint64) ([]*User, error) {
 	if len(userIDs) == 0 {
 		return []*User{}, nil

@@ -1,6 +1,7 @@
 package model
 
 type UserDM interface {
+	GetUser(userID *uint64, username *string) (*User, error)
 	GetUserByIDs(userID []uint64) ([]*User, error)
 	GetUserByEmails(email []string) ([]*User, error)
 
