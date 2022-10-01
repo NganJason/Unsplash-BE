@@ -1,1 +1,1 @@
-web: ./bin/Unsplash-BE
+web: bin/Unsplash-BE
