@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/NganJason/Unsplash-BE/internal/config"
 	"github.com/NganJason/Unsplash-BE/internal/middleware"
@@ -45,11 +46,21 @@ func main() {
 	handler := c.Handler(router)
 
 	server := &http.Server{
-		Addr:    ":" + "8082",
+		Addr:    ":" + GetPort(),
 		Handler: handler,
 	}
 
-	clog.Info(context.Background(), "serving at 8082")
+	clog.Info(context.Background(), fmt.Sprintf("Listening to port %s", GetPort()))
 
 	server.ListenAndServe()
+}
+
+func GetPort() string {
+	var port = os.Getenv("PORT")
+
+	if port == "" {
+		port = "8082"
+	}
+
+	return ":" + port
 }

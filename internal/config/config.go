@@ -74,7 +74,6 @@ func fetchConfig() {
 	}
 }
 
-
 func fetchConfigFromFile(
 	filePath string,
 	configStruct interface{},
