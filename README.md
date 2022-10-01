@@ -18,7 +18,7 @@ Full stack Unsplash Clone built using React, Typescript, SCSS and Golang.
 #### Tech Stack
 * Frontend - React, TypeScript, SCSS
 * Backend - Golang
-* Database - mySQL
+* Database - MySQL
 * File server - Cloudinary
 
 ## Demo Videos ##
