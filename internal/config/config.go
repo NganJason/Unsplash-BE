@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/NganJason/Unsplash-BE/pkg/cerr"
 	"github.com/NganJason/Unsplash-BE/pkg/clog"
@@ -34,10 +36,10 @@ func InitGlobalConfig() error {
 	return nil
 }
 
-const configFilePath = "../internal/config/config.json"
+const configFilePath = "./internal/config/config.json"
 
 func initConfigs() error {
-	fetchConfigFromFile(configFilePath, &GlobalConfig)
+	fetchConfig()
 
 	if GlobalConfig.UnsplashDB == nil {
 		clog.Fatal(context.Background(), "fail to init unsplashDB")
@@ -47,6 +49,31 @@ func initConfigs() error {
 
 	return nil
 }
+
+func fetchConfig() {
+	DBUrl := os.Getenv("DATABASE_URL")
+	if DBUrl != "" {
+		split := strings.Split(DBUrl, ":")
+		dbUsername := split[0]
+		dbPassword := split[1]
+		dbHost := split[2]
+		dbName := split[3]
+
+		GlobalConfig.UnsplashDB = &Database{
+			Username: dbUsername,
+			Password: dbPassword,
+			DBName:   dbName,
+			Host:     dbHost,
+		}
+	} else {
+		fetchConfigFromFile(configFilePath, &GlobalConfig)
+	}
+
+	if GlobalConfig == nil {
+		log.Fatal("failed to fetch configs")
+	}
+}
+
 
 func fetchConfigFromFile(
 	filePath string,
