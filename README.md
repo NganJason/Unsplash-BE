@@ -21,7 +21,6 @@ Full stack Unsplash Clone built using React, Typescript, SCSS and Golang.
 * Database - mySQL
 * File server - Cloudinary
 
-
 ## Demo Videos ##
-* [User flow demo](https://www.canva.com/design/DAFNyMFttyo/oIH2SiTuLi4pXwUdImICTg/watch?utm_content=DAFNyMFttyo&utm_campaign=celebratory_first_publish&utm_medium=link&utm_source=celebratory_first_publish)
+* [User flow demo](https://www.canva.com/design/DAFNyMFttyo/oIH2SiTuLi4pXwUdImICTg/watch?utm_content=DAFNyMFttyo&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink)
 
