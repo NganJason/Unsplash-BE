@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	envFilePath = "../.env"
+	envFilePath = ".env"
 )
 
 func GetDotEnvVariable(key string) (string, error) {
