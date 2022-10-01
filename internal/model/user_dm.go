@@ -96,6 +96,13 @@ func (dm *userDM) GetUser(userID *uint64, username *string) (*User, error) {
 		users = append(users, &user)
 	}
 
+	if len(users) == 0 {
+		return nil, cerr.New(
+			"user not found",
+			http.StatusBadRequest,
+		)
+	}
+
 	return users[0], nil
 }
 
