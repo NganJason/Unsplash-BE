@@ -37,7 +37,10 @@ func main() {
 
 	c := cors.New(
 		cors.Options{
-			AllowedOrigins:   []string{"http://localhost:3000"},
+			AllowedOrigins:   []string{
+				"http://localhost:3000",
+				"https://keen-elf-3ab3ce.netlify.app/",
+			},
 			AllowCredentials: true,
 			AllowedMethods:   []string{"POST", "GET", "OPTIONS"},
 		},
