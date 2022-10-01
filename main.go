@@ -46,11 +46,11 @@ func main() {
 	handler := c.Handler(router)
 
 	server := &http.Server{
-		Addr:    ":" + GetPort(),
+		Addr:    GetPort(),
 		Handler: handler,
 	}
 
-	clog.Info(context.Background(), fmt.Sprintf("Listening to port %s", GetPort()))
+	clog.Info(context.Background(), fmt.Sprintf("serving at %s", GetPort()))
 
 	server.ListenAndServe()
 }
